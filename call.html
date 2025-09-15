@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meeting Room</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #1f1f1f, #2c2c2c);
+    font-family: "Segoe UI", sans-serif;
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  header {
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(45, 47, 49, 0.9);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  }
+  header h2 {
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #ffd700;
+    text-shadow: 0 0 10px #ffd70050;
+  }
+  #timer {
+    font-size: 1rem;
+    font-weight: bold;
+    background: rgba(0,0,0,0.5);
+    padding: 6px 14px;
+    border-radius: 12px;
+    text-shadow: 0 0 5px #fff;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  .video-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    position: relative;
+  }
+  video {
+    width: 100%;
+    max-width: 900px;
+    height: 500px;
+    border-radius: 16px;
+    background: black;
+    box-shadow: 0px 8px 25px rgba(255,215,0,0.5);
+    border: 2px solid #ffd700;
+  }
+  .controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(30, 30, 30, 0.8);
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    border-radius: 50px;
+    z-index: 1000;
+  }
+  .controls button {
+    width: 55px;
+    height: 55px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 22px;
+    background: linear-gradient(145deg, #3c4043, #1f1f1f);
+    color: white;
+    transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  .controls button:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 20px #ffd700, 0 0 40px #ffd70050;
+  }
+  .controls #disconnect { background: #d93025; color: white; }
+
+  /* Reaction panel */
+  .reaction-panel {
+    position: absolute;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    background: rgba(45, 47, 49, 0.8);
+    padding: 8px 16px;
+    border-radius: 50px;
+    backdrop-filter: blur(10px);
+  }
+  .reaction-panel button {
+    font-size: 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s;
+  }
+  .reaction-panel button:hover {
+    transform: scale(1.3);
+    filter: drop-shadow(0 0 8px #ffd700);
+  }
+  .reaction {
+    position: absolute;
+    font-size: 32px;
+    animation: floatUp 2.5s ease-out forwards;
+    pointer-events: none;
+    text-shadow: 0 0 8px #fff, 0 0 15px #ffd70050;
+  }
+  @keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    50% { opacity: 0.9; transform: translateY(-80px) scale(1.2); }
+    100% { opacity: 0; transform: translateY(-160px) scale(0.8); }
+  }
+
+  /* Chat panel */
+  .chat-panel {
+    position: fixed;
+    right: -350px;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background: rgba(20, 20, 20, 0.95);
+    box-shadow: -5px 0 15px rgba(0,0,0,0.6);
+    transition: right 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    z-index: 1500;
+  }
+  .chat-panel.active { right: 0; }
+  .chat-header {
+    padding: 12px;
+    background: #222;
+    font-weight: bold;
+    font-size: 1rem;
+    color: #ffd700;
+    border-bottom: 1px solid #444;
+  }
+  .chat-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+  }
+  .chat-messages .msg {
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    max-width: 85%;
+    line-height: 1.3;
+  }
+  .msg.you { background: #444; align-self: flex-end; }
+  .msg.other { background: #333; color: #ffd700; align-self: flex-start; }
+  .chat-input {
+    display: flex;
+    border-top: 1px solid #444;
+  }
+  .chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+    background: #2c2c2c;
+    color: white;
+    font-size: 0.9rem;
+  }
+  .chat-input button {
+    padding: 10px 15px;
+    border: none;
+    background: #ffd700;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  /* Pop message */
+  .popup-message {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 215, 0, 0.9);
+    color: black;
+    padding: 14px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(255,215,0,0.7);
+    z-index: 2000;
+    opacity: 0;
+    animation: fadein 0.5s forwards, fadeout 0.5s 4.5s forwards;
+  }
+  @keyframes fadein { from {opacity:0; transform:translate(-50%, -20px);} to {opacity:1; transform:translate(-50%,0);} }
+  @keyframes fadeout { from {opacity:1;} to {opacity:0;} }
+</style>
+</head>
+<body>
+
+<header>
+  <h2>Meeting in Progress</h2>
+  <div id="timer">00:00</div>
+</header>
+
+<div class="video-container">
+  <video id="webcam" autoplay playsinline></video>
+  <div class="reaction-panel" id="reaction-panel" style="display:none;">
+    <button onclick="sendReaction('👏', this)">👏</button>
+    <button onclick="sendReaction('😂', this)">😂</button>
+    <button onclick="sendReaction('👍', this)">👍</button>
+    <button onclick="sendReaction('❤️', this)">❤️</button>
+    <button onclick="sendReaction('🎉', this)">🎉</button>
+  </div>
+</div>
+
+<div class="controls">
+  <button id="mic"><i class="fas fa-microphone"></i></button>
+  <button id="camera"><i class="fas fa-video"></i></button>
+  <button id="screen"><i class="fas fa-desktop"></i></button>
+  <button id="hand"><i class="fas fa-hand-paper"></i></button>
+  <button id="reaction-btn"><i class="fas fa-face-smile"></i></button>
+  <button id="chat-btn"><i class="fas fa-comments"></i></button>
+  <button id="disconnect"><i class="fas fa-phone-slash"></i></button>
+</div>
+
+<!-- Chat Panel -->
+<div class="chat-panel" id="chat-panel">
+  <div class="chat-header">Chat</div>
+  <div class="chat-messages" id="chat-messages"></div>
+  <div class="chat-input">
+    <input type="text" id="chat-input" placeholder="Type a message...">
+    <button id="send-btn">Send</button>
+  </div>
+</div>
+
+<script>
+const video = document.getElementById('webcam');
+const timerEl = document.getElementById('timer');
+let stream, micEnabled = true, camEnabled = true, screenStream;
+
+const params = new URLSearchParams(window.location.search);
+const duration = parseInt(params.get("duration")) || 10; 
+let timeLeft = duration * 60; 
+let lastMinuteAlert = timeLeft;
+
+const synth = window.speechSynthesis;
+
+// Start webcam
+async function startMedia() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    video.srcObject = stream;
+  } catch (err) {
+    alert('Could not access webcam/mic: ' + err);
+  }
+}
+
+// Popup
+function showPopupMessage(msg) {
+  const popup = document.createElement("div");
+  popup.className = "popup-message";
+  popup.textContent = msg;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 5000);
+}
+
+// Timer
+function updateTimer() {
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+const countdown = setInterval(() => {
+  updateTimer();
+  const minutesLeft = Math.floor(timeLeft / 60);
+  if (minutesLeft !== Math.floor(lastMinuteAlert / 60) && timeLeft > 0) {
+    const message = `${minutesLeft} minute(s) left!`;
+    showPopupMessage(message);
+    const utterance = new SpeechSynthesisUtterance(message);
+    utterance.lang = 'en-US';
+    synth.speak(utterance);
+    lastMinuteAlert = timeLeft;
+  }
+  timeLeft--;
+  if (timeLeft < 0) {
+    endCall();
+    const endMsg = "Meeting ended automatically!";
+    showPopupMessage(endMsg);
+    const endUtterance = new SpeechSynthesisUtterance(endMsg);
+    synth.speak(endUtterance);
+  }
+}, 1000);
+
+// Controls
+document.getElementById("mic").addEventListener("click", () => {
+  if (!stream) return;
+  micEnabled = !micEnabled;
+  stream.getAudioTracks().forEach(track => track.enabled = micEnabled);
+  document.getElementById("mic").innerHTML = micEnabled ? '<i class="fas fa-microphone"></i>' : '<i class="fas fa-microphone-slash"></i>';
+});
+
+document.getElementById("camera").addEventListener("click", () => {
+  if (!stream) return;
+  camEnabled = !camEnabled;
+  stream.getVideoTracks().forEach(track => track.enabled = camEnabled);
+  document.getElementById("camera").innerHTML = camEnabled ? '<i class="fas fa-video"></i>' : '<i class="fas fa-video-slash"></i>';
+});
+
+document.getElementById("screen").addEventListener("click", async () => {
+  try {
+    screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+    video.srcObject = screenStream;
+    screenStream.getVideoTracks()[0].onended = () => video.srcObject = stream;
+  } catch (err) { alert("Screen share failed: " + err); }
+});
+
+document.getElementById("hand").addEventListener("click", () => { showPopupMessage("✋ You raised your hand."); });
+
+document.getElementById("reaction-btn").addEventListener("click", () => {
+  const panel = document.getElementById("reaction-panel");
+  panel.style.display = panel.style.display === "none" ? "flex" : "none";
+});
+
+// Chat system
+const chatPanel = document.getElementById("chat-panel");
+document.getElementById("chat-btn").addEventListener("click", () => {
+  chatPanel.classList.toggle("active");
+});
+document.getElementById("send-btn").addEventListener("click", sendMessage);
+document.getElementById("chat-input").addEventListener("keypress", e => {
+  if (e.key === "Enter") sendMessage();
+});
+function sendMessage() {
+  const input = document.getElementById("chat-input");
+  const msg = input.value.trim();
+  if (!msg) return;
+  const msgDiv = document.createElement("div");
+  msgDiv.className = "msg you";
+  msgDiv.textContent = msg;
+  document.getElementById("chat-messages").appendChild(msgDiv);
+  input.value = "";
+  // auto reply demo
+  setTimeout(() => {
+    const reply = document.createElement("div");
+    reply.className = "msg other";
+    reply.textContent = "Got it: " + msg;
+    document.getElementById("chat-messages").appendChild(reply);
+    document.getElementById("chat-messages").scrollTop = chatPanel.scrollHeight;
+  }, 800);
+}
+
+// Disconnect
+document.getElementById("disconnect").addEventListener("click", () => {
+  endCall();
+  window.location.href = "thanks.html";
+});
+
+function endCall() {
+  clearInterval(countdown);
+  if (stream) stream.getTracks().forEach(track => track.stop());
+  if (screenStream) screenStream.getTracks().forEach(track => track.stop());
+  video.srcObject = null;
+}
+
+// Floating reactions
+function sendReaction(emoji, button) {
+  const container = document.querySelector(".video-container");
+  for(let i=0;i<3;i++){
+    const reaction = document.createElement("div");
+    reaction.className = "reaction";
+    reaction.textContent = emoji;
+    const rect = button.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    reaction.style.left = `${rect.left + rect.width/2 - containerRect.left + (Math.random()*20-10)}px`;
+    reaction.style.bottom = `${containerRect.height - (rect.top - containerRect.top) + 10}px`;
+    container.appendChild(reaction);
+    setTimeout(() => reaction.remove(), 2500);
+  }
+}
+
+startMedia();
+</script>
+
+</body>
+</html>
