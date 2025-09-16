@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ready to Join</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .container {
+    display: flex;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 900px;
+    overflow: hidden;
+  }
+  .left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: black;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+  }
+  video {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  .video-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .video-controls button {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    color: white;
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .video-controls button:hover {
+    background: rgba(255,255,255,0.3);
+  }
+  .right {
+    flex: 0.6;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px;
+    text-align: center;
+  }
+  .right h2 { margin-bottom: 5px; }
+  .switch-btn {
+    background: #1a73e8;
+    border: none;
+    color: white;
+    font-size: 16px;
+    padding: 12px 30px;
+    border-radius: 25px;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .switch-btn:hover { background: #0f5fd3; }
+  .tooltip {
+    background: #e8f0fe;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 14px;
+    margin-top: 15px;
+  }
+  .got-it-btn {
+    background: white;
+    border: 1px solid #1a73e8;
+    color: #1a73e8;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 14px;
+    margin-top: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .got-it-btn:hover { background: #d2e3fc; }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Left Side: Video + Controls -->
+  <div class="left">
+    <video id="webcam" autoplay playsinline></video>
+    <div class="video-controls">
+      <button id="toggleMic" title="Mute/Unmute">🎤</button>
+      <button id="toggleCamera" title="Turn Camera Off/On">📷</button>
+      <button title="Settings">⚙️</button>
+    </div>
+  </div>
+
+  <!-- Right Side: Ready to Join UI -->
+  <div class="right">
+    <h2>Ready to join?</h2>
+    <p><b>You</b> are in this call</p>
+    <button class="switch-btn" id="switchBtn">Join Now</button>
+    <div class="tooltip">
+      <p>Move the call here without interrupting it,<br>then stop the call on the other device</p>
+      <button class="got-it-btn" id="gotItBtn">Got it</button>
+    </div>
+  </div>
+</div>
+

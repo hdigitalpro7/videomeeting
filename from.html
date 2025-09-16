@@ -1,0 +1,197 @@
+<!-- Sign-Up & Login Section -->
+<section class="auth-section">
+  <div class="auth-container">
+    <h2 id="form-title">Create Your Account</h2>
+    <form id="auth-form">
+      <input type="text" id="fullname" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+      <button type="submit" id="submit-btn">Sign Up</button>
+    </form>
+    <p class="auth-note" id="auth-note">
+      Already have an account? <a href="#" id="toggle-link">Login</a><br>
+      <a href="#" id="forgot-link">Forgot Password?</a>
+    </p>
+  </div>
+</section>
+
+<style>
+/* (Same styles as before for dark theme & responsive layout) */
+.auth-section {
+  background: #1a1333;
+  color: #fff;
+  padding: 60px 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+.auth-container {
+  max-width: 500px;
+  margin: auto;
+}
+.auth-container h2 {
+  color: #ffd700;
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+#auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+#auth-form input {
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+}
+#auth-form input:focus {
+  box-shadow: 0 0 5px #ffd700;
+}
+#auth-form button {
+  background: #ffd700;
+  color: #1a1333;
+  font-weight: bold;
+  padding: 12px 25px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s, transform 0.3s;
+}
+#auth-form button:hover {
+  background: #e6c300;
+  transform: scale(1.05);
+}
+.auth-note {
+  color: #ccc;
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+.auth-note a {
+  color: #ffd700;
+  text-decoration: none;
+  font-weight: bold;
+}
+.auth-note a:hover {
+  text-decoration: underline;
+}
+@media (max-width: 768px) {
+  .auth-container h2 {
+    font-size: 1.6rem;
+  }
+  #auth-form input {
+    font-size: 0.95rem;
+  }
+  #auth-form button {
+    font-size: 0.95rem;
+    padding: 10px 22px;
+  }
+}
+</style>
+
+<script>
+const formTitle = document.getElementById('form-title');
+const authForm = document.getElementById('auth-form');
+const toggleLink = document.getElementById('toggle-link');
+const forgotLink = document.getElementById('forgot-link');
+const submitBtn = document.getElementById('submit-btn');
+const fullnameInput = document.getElementById('fullname');
+const confirmPasswordInput = document.getElementById('confirm-password');
+
+let isLogin = false;
+
+// Check if any account exists in localStorage and show login by default
+window.addEventListener('DOMContentLoaded', () => {
+  let accounts = Object.keys(localStorage);
+  if (accounts.length > 0) {
+    switchToLogin();
+  }
+});
+
+function switchToLogin() {
+  isLogin = true;
+  formTitle.textContent = 'Login to Your Account';
+  submitBtn.textContent = 'Login';
+  fullnameInput.style.display = 'none';
+  confirmPasswordInput.style.display = 'none';
+  toggleLink.textContent = 'Sign Up';
+}
+
+function switchToSignUp() {
+  isLogin = false;
+  formTitle.textContent = 'Create Your Account';
+  submitBtn.textContent = 'Sign Up';
+  fullnameInput.style.display = 'block';
+  confirmPasswordInput.style.display = 'block';
+  toggleLink.textContent = 'Login';
+}
+
+// Toggle between Sign-Up and Login
+toggleLink.addEventListener('click', e => {
+  e.preventDefault();
+  if (isLogin) switchToSignUp();
+  else switchToLogin();
+});
+
+// Handle Form Submission (Sign Up & Login)
+authForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const fullname = fullnameInput.value?.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const confirmPassword = confirmPasswordInput.value?.trim();
+
+  if (!isLogin) {
+    // Sign-Up
+    if (password !== confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+    if (localStorage.getItem(email)) {
+      alert('Email already registered. Please login.');
+      switchToLogin();
+      return;
+    }
+    localStorage.setItem(email, password);
+    alert('Account created successfully! You can now login.');
+    switchToLogin();
+    authForm.reset();
+  } else {
+    // Login
+    const storedPass = localStorage.getItem(email);
+    if (!storedPass) {
+      alert('Email not registered. Please sign up.');
+      switchToSignUp();
+      return;
+    }
+    if (storedPass !== password) {
+      alert('Incorrect password!');
+      return;
+    }
+    alert('Login successful!');
+    authForm.reset();
+
+    // ✅ Redirect to call.html after successful login
+    window.location.href = "call.html";
+  }
+});
+
+// Handle Forgot Password
+forgotLink.addEventListener('click', e => {
+  e.preventDefault();
+  const email = prompt('Enter your registered email:');
+  if (!email) return;
+  const storedPass = localStorage.getItem(email);
+  if (!storedPass) {
+    alert('Email not registered.');
+    return;
+  }
+  const newPass = prompt('Enter your new password:');
+  if (!newPass) return;
+  localStorage.setItem(email, newPass);
+  alert('Password updated successfully!');
+});
+</script>
+

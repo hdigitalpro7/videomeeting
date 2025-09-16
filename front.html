@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dear Therapist</title>
+
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f9f9f9; color: #333; }
+
+    /* NAVBAR */
+    nav {
+      background: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 1.6rem; font-weight: bold; color: #2a1a5e; }
+    nav ul { list-style: none; display: flex; gap: 30px; align-items: center; }
+    nav a { text-decoration: none; color: #333; font-weight: 500; position: relative; }
+    nav a::after {
+      content: ''; position: absolute; left: 0; bottom: -4px;
+      width: 0; height: 2px; background: #2a1a5e;
+      transition: width 0.3s ease;
+    }
+    nav a:hover::after { width: 100%; }
+    .nav-btn {
+      background: #2a1a5e; color: white; padding: 8px 18px;
+      border-radius: 30px; font-weight: bold;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .nav-btn:hover { background: #3d2c8d; transform: scale(1.05); }
+
+    /* HAMBURGER */
+    .menu-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .menu-toggle span {
+      width: 28px; height: 3px; background: #2a1a5e;
+      border-radius: 3px; transition: all 0.3s ease;
+    }
+
+    /* OVERLAY */
+    .overlay {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 150;
+    }
+    .overlay.show { opacity: 1; pointer-events: all; }
+
+    /* MOBILE MENU */
+    .mobile-menu {
+      position: fixed; top: 0; right: -300px;
+      width: 260px; height: 100%;
+      background: white; box-shadow: -3px 0 12px rgba(0,0,0,0.15);
+      padding: 25px; display: flex; flex-direction: column; gap: 20px;
+      transition: right 0.35s cubic-bezier(0.25, 1, 0.3, 1);
+      z-index: 200;
+    }
+    .mobile-menu.show { right: 0; }
+    .close-btn {
+      align-self: flex-end; font-size: 1.8rem; font-weight: bold;
+      cursor: pointer; margin-bottom: 10px; color: #2a1a5e;
+    }
+    .mobile-menu a {
+      text-decoration: none; font-size: 1.1rem;
+      color: #333; font-weight: 500;
+    }
+    .mobile-btn {
+      margin-top: 10px; display: inline-block;
+      background: #2a1a5e; color: white; text-align: center;
+      padding: 10px 20px; border-radius: 30px; font-weight: bold;
+    }
+
+    /* WELCOME BANNER */
+    .welcome-banner {
+      background: #2a1a5e; color: white; text-align: center;
+      font-size: 1.3rem; font-weight: 600;
+      padding: 15px 10px;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex; align-items: center; justify-content: center;
+      gap: 40px; padding: 50px 80px; background: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    .header img {
+      width: 180px; height: 180px; border-radius: 50%;
+      object-fit: cover; border: 5px solid #f1f1f1;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    .header-text { max-width: 700px; }
+    .header-text h1 { font-size: 2.2rem; margin-bottom: 10px; color: #2a1a5e; }
+    .role { color: #777; margin-bottom: 20px; font-size: 1.1rem; }
+    .header-text p { font-size: 1.05rem; line-height: 1.6; }
+
+    /* TICKER */
+    .ticker {
+      background: linear-gradient(90deg, #2a1a5e, #5f4bb6);
+      color: white;
+      white-space: nowrap;
+      overflow: hidden;
+      position: relative;
+      font-weight: 500;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+    }
+    .ticker-content {
+      display: inline-block;
+      padding: 12px 0;
+      animation: scroll 15s linear infinite;
+    }
+    .ticker-content:hover {
+      animation-play-state: paused;
+      cursor: pointer;
+    }
+    .ticker strong {
+      color: #ffd700;
+      font-weight: 600;
+    }
+    .ticker i {
+      margin: 0 6px;
+      color: #fff;
+      font-size: 1rem;
+    }
+    @keyframes scroll {
+      0% { transform: translateX(50%); }
+      100% { transform: translateX(-60%); }
+    }
+
+    /* SERVICES */
+    .services-section {
+      padding: 40px 80px; background: #fafafa; text-align: center;
+    }
+    .services-section h2 { font-size: 1.8rem; margin-bottom: 30px; color: #2a1a5e; }
+    .services {
+      display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+    }
+    .service {
+      flex: 1 1 200px; background: white; padding: 20px;
+      border-radius: 15px; box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+      font-weight: 500; font-size: 1rem; transition: transform 0.2s ease;
+    }
+    .service:hover { transform: translateY(-5px); }
+
+    /* FOOTER */
+    .footer-section { text-align: center; padding: 40px 20px; }
+    .socials { display: flex; justify-content: center; gap: 25px; margin-bottom: 25px; }
+    .socials a i { font-size: 1.5rem; color: #2a1a5e; transition: transform 0.2s ease; }
+    .socials a:hover i { transform: scale(1.2); color: #3d2c8d; }
+    .join-btn {
+      background: #000; color: white; padding: 12px 30px;
+      border-radius: 30px; text-decoration: none; font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    .join-btn:hover { background: #333; }
+
+    /* RESPONSIVE */
+    @media(max-width: 768px){
+      nav ul { display: none; }
+      .menu-toggle { display: flex; }
+      .header { flex-direction: column; text-align: center; padding: 30px 20px; }
+      .header img { width: 140px; height: 140px; }
+      .header-text { max-width: 100%; }
+      .services-section { padding: 30px 20px; }
+    }
+    
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo">Dear Therapist</div>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#book" class="nav-btn">Book Session</a></li>
+    </ul>
+    <div class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></div>
+  </nav>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="close-btn" id="closeBtn">&times;</div>
+    <a href="#home">Home</a>
+    <a href="#services">Services</a>
+    <a href="#contact">Contact</a>
+    <a href="#book" class="mobile-btn" style="color: white;">Book Session</a>
+  </div>
+
+  <!-- WELCOME BANNER -->
+  <div class="welcome-banner">✨ Welcome to your Healing Journey ✨</div>
+
+  <!-- HEADER -->
+  <section class="header" id="home">
+    <img src="ts.jpeg" alt="Dr. Shaveta Bhardwaj">
+    <div class="header-text">
+      <h1>Dr. Shaveta Bhardwaj</h1>
+      <p class="role">Licensed Psychologist | Relationship Counselor</p>
+      <p>Helping individuals overcome anxiety, stress, and relationship challenges for over 11 years through in-person and online sessions.</p>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-content">
+      <i class="fa-solid fa-brain"></i> <strong>Hypnosis</strong> – Release fears |
+      <i class="fa-solid fa-people-arrows"></i> <strong>Couple Counseling</strong> – Better bonding |
+      <i class="fa-solid fa-moon"></i> <strong>Past Life Regression</strong> – Heal trauma |
+      <i class="fa-solid fa-leaf"></i> <strong>Deep Healing</strong> – Emotional balance |
+      <i class="fa-solid fa-face-meh-blank"></i> <strong>Overthinking</strong> – Calm mind |
+      <i class="fa-solid fa-heart-crack"></i> <strong>Negative Thoughts</strong> – Build positivity |
+      <i class="fa-solid fa-scroll"></i> <strong>Kundli Matching</strong> – Compatibility check |
+      <i class="fa-solid fa-ring"></i> <strong>Post-Divorce</strong> – Fresh start |
+      <i class="fa-solid fa-baby"></i> <strong>Post-Partum</strong> – Support for mothers |
+      <i class="fa-solid fa-music"></i> <strong>Sound Healing</strong> – Stress relief |
+      <i class="fa-solid fa-eye"></i> <strong>Tarot Reading</strong> – Future clarity |
+      <i class="fa-solid fa-spa"></i> <strong>Stress & Anxiety</strong> – Find peace |
+      <i class="fa-solid fa-child"></i> <strong>Inner Child</strong> – Heal childhood wounds
+    </div>
+  </div>
+
+ <!-- SERVICES -->
+<section class="services-section" id="services" style="padding:60px 20px; background:#f7f5ff; text-align:center;">
+  <h2 style="font-size:2.2rem; color:#2a1a5e; margin-bottom:20px;">✨ Explore Our Services ✨</h2>
+  <span style="
+  font-weight:700;
+  font-size:1.1rem;
+  color:#fff;
+  background:#2a1a5e;
+  top: 50px;
+  padding:6px 14px;
+  border-radius:10px;
+  box-shadow:0 0 10px rgba(42,26,94,0.6),
+             0 0 20px rgba(138,43,226,0.4);
+  letter-spacing:1px;
+">Click for Details</span> <br><br>
+
+  <div class="services" style="display:flex; flex-wrap:wrap; justify-content:center; gap:25px;">
+    
+    <!-- Counseling Box -->
+    <div class="service" data-service="counseling" style="flex:1 1 300px; background:white; padding:25px; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.08); text-align:center; cursor:pointer; transition: transform 0.3s, box-shadow 0.3s;">
+      <h3 style="font-size:1.4rem; color:#8e44ad; margin-bottom:15px;"><i class="fa-solid fa-user-doctor"></i> Counseling</h3>
+    </div>
+    
+    <!-- Therapies Box -->
+    <div class="service" data-service="therapies" style="flex:1 1 300px; background:white; padding:25px; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.08); text-align:center; cursor:pointer; transition: transform 0.3s, box-shadow 0.3s;">
+      <h3 style="font-size:1.4rem; color:#27ae60; margin-bottom:15px;"><i class="fa-solid fa-leaf"></i> Therapies</h3>
+    </div>
+    
+      <!-- Astrology & Spiritual Guidance Box -->
+      <div class="service" data-service="spiritual" style="flex:1 1 300px; background:white; padding:25px; border-radius:20px; box-shadow:0 10px 20px rgba(0,0,0,0.08); text-align:center; cursor:pointer; transition: transform 0.3s, box-shadow 0.3s;">
+        <h3 style="font-size:1.4rem; color:#f39c12; margin-bottom:15px;"><i class="fa-solid fa-sparkles"></i> Astrology & Spiritual</h3>
+      </div>
+      
+  </div>
+</section>
+
+<!-- Service Details Popup -->
+<div id="servicePopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(3px); z-index:5000; justify-content:center; align-items:center;">
+  <div style="background:white; border-radius:15px; width:90%; max-width:600px; padding:25px; position:relative; color:#000; max-height:80vh; overflow-y:auto;">
+    <span id="closeServicePopup" style="position:absolute; top:15px; right:20px; cursor:pointer; font-weight:bold; font-size:22px;">&times;</span>
+    <div id="serviceContent" style="text-align:left; line-height:1.6; color:#333;"></div>
+  </div>
+</div>
+
+<script>
+  const servicePopup = document.getElementById('servicePopup');
+  const serviceContent = document.getElementById('serviceContent');
+  const closeServicePopup = document.getElementById('closeServicePopup');
+
+  const servicesData = {
+    counseling: `
+      <h3>🧠 <strong>Counseling</strong></h3>
+      <ul>
+        <li>• Individual Session (General Counselling)</li>
+        <li>• Child Counselling (Anger Management, Behaviour Counseling)</li>
+        <li>• <strong>Couple Counseling</strong> – Strengthen relationships & resolve conflicts</li>
+        <li>• <strong>Post-Divorce Counselling</strong> – Heal emotional pain & rebuild life</li>
+        <li>• <strong>Post-Partum Counselling</strong> – Support for new mothers’ mental health</li>
+      </ul>
+    `,
+    therapies: `
+      <h3>🌿 <strong>Therapies</strong></h3>
+      <ul>
+        <li>• Hypnosis – Reprogram your subconscious & overcome fears</li>
+        <li>• Past Life Regression Therapy – Heal karmic patterns & deep trauma</li>
+        <li>• Deep Healing Therapy – Restore emotional & spiritual balance</li>
+        <li>• Overthinking Therapy – Quiet the mind & gain clarity</li>
+        <li>• Negative Thoughts Therapy – Build positivity & inner peace</li>
+        <li>• Inner Child Healing – Release childhood wounds & grow stronger</li>
+        <li>• Stress & Anxiety Therapy – Regain focus & calm</li>
+      </ul>
+    `,
+    spiritual: `
+      <h3>🔮 <strong>Astrology & Spiritual Guidance</strong></h3>
+      <ul>
+        <li>• Kundli Reading & Matching – Understand compatibility & life path</li>
+        <li>• Tarot Card Reading – Clarity & direction for your future</li>
+        <li>• Sound Healing – Reduce stress & recharge your energy</li>
+      </ul>
+    `
+  };
+
+  document.querySelectorAll('.service').forEach(box => {
+    box.addEventListener('click', () => {
+      const key = box.dataset.service;
+      serviceContent.innerHTML = servicesData[key];
+      servicePopup.style.display = 'flex';
+    });
+  });
+
+  closeServicePopup.addEventListener('click', () => {
+    servicePopup.style.display = 'none';
+  });
+
+  // Close on outside click
+  servicePopup.addEventListener('click', (e) => {
+    if(e.target === servicePopup) servicePopup.style.display = 'none';
+  });
+</script>
+
+<style>
+  .services-section .service:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  }
+
+</style>
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes scaleIn {
+    from { transform: scale(0.9); opacity:0; }
+    to { transform: scale(1); opacity:1; }
+  }
+
+  #serviceContent h3 {
+    background: linear-gradient(90deg,#9b59b6,#6c63ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size:1.6rem; margin-bottom:15px;
+  }
+
+  #serviceContent ul {
+    list-style:none;
+    padding-left:0;
+  }
+
+  #serviceContent ul li {
+    margin-bottom:10px;
+    padding-left:25px;
+    position:relative;
+    transition: transform 0.2s;
+     list-style: none;
+  }
+
+  #serviceContent ul li::before {
+    content:'•';
+    position:absolute; left:0; color:#9b59b6; font-weight:bold;
+    font-size:1.2rem;
+  }
+
+  #serviceContent ul li:hover {
+    transform: translateX(5px);
+    color:#6c63ff;
+  }
+
+</style>
+<!-- Join a Session Section Start -->
+<section id="join-session" style="padding: 80px 20px; background-color: #f0f0ff; text-align: center;">
+  <div class="container" style="max-width: 900px; margin: 0 auto;">
+    <!-- Section Title -->
+    <h2 style="font-size: 2.5rem; color: #222; margin-bottom: 20px;">🎥 Join a Session</h2>
+    
+    <!-- Section Description -->
+    <p style="font-size: 1.1rem; color: #555; line-height: 1.8; margin-bottom: 40px;">
+      Already booked a session? Join it here with just one click. Make sure your camera and microphone are ready for a smooth session experience.
+    </p>
+    
+    <!-- Join Button -->
+    <button id="openGuidelines" 
+       style="display: inline-block; padding: 15px 35px; font-size: 1.2rem; color: #fff; background-color: #9b59b6; border-radius: 8px; border:none; cursor:pointer; transition: background 0.3s;">
+      Join Now
+    </button>
+  </div>
+</section>
+<!-- Floating Main User Icon -->
+<div id="floating-wrapper" style="position: fixed; bottom: 20px; right: 20px; z-index: 3000; display:flex; flex-direction:column; align-items:flex-end;">
+  <!-- Sub Buttons -->
+  <div id="sub-buttons" style="
+      display: flex; flex-direction: column; gap: 12px; margin-bottom: 70px;
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.3s, transform 0.3s;
+  ">
+      <button class="fb-btn" data-type="Suggestion" title="Suggestion" style="
+          background: linear-gradient(135deg, #6a11cb, #2575fc);
+          color: #fff; border:none; padding:12px 18px; border-radius:50px;
+          font-weight:bold; box-shadow:0 4px 15px rgba(0,0,0,0.3); cursor:pointer;
+          display:flex; align-items:center; gap:8px; font-size:14px;
+          transform: translateX(50px); transition: transform 0.3s;
+      "><i class="fas fa-lightbulb"></i> Suggestion</button>
+
+      <button class="fb-btn" data-type="Complaint" title="Complaint" style="
+          background: linear-gradient(135deg, #ff416c, #ff4b2b);
+          color: #fff; border:none; padding:12px 18px; border-radius:50px;
+          font-weight:bold; box-shadow:0 4px 15px rgba(0,0,0,0.3); cursor:pointer;
+          display:flex; align-items:center; gap:8px; font-size:14px;
+          transform: translateX(50px); transition: transform 0.3s;
+      "><i class="fas fa-exclamation-triangle"></i> Complaint</button>
+
+      <button class="fb-btn" data-type="Feedback" title="Feedback" style="
+          background: linear-gradient(135deg, #11998e, #38ef7d);
+          color: #fff; border:none; padding:12px 18px; border-radius:50px;
+          font-weight:bold; box-shadow:0 4px 15px rgba(0,0,0,0.3); cursor:pointer;
+          display:flex; align-items:center; gap:8px; font-size:14px;
+          transform: translateX(50px); transition: transform 0.3s;
+      "><i class="fas fa-comment-dots"></i> Feedback</button>
+  </div>
+
+  <!-- Main Icon -->
+  <button id="main-icon" style="
+      width: 60px; height: 60px; border-radius: 50%;
+      background: linear-gradient(135deg, #9b59b6, #6c5ce7);
+      color: #fff; border: none;
+      cursor: pointer; display: flex; justify-content: center;
+      align-items: center; font-size: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+  "><i class="fas fa-user"></i></button>
+</div>
+
+<!-- Feedback Form Modal -->
+<div id="feedback-form" style="
+    position: fixed;
+    bottom: 120px;
+    right: 20px;
+    width: 320px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+    padding: 20px;
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 3000;
+    border-top: 5px solid #9b59b6;
+">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 id="fb-title" style="margin:0 0 10px 0; color:#5e2ca5; font-weight:bold;">Feedback Form</h3>
+        <button id="fb-close" style="
+            background: transparent; border: none; font-size: 20px; cursor:pointer; color:#e74c3c;
+        ">&times;</button>
+    </div>
+    <input type="text" id="fb-name" placeholder="Your Name" style="padding:10px; border-radius:8px; border:1px solid #ccc; font-size:14px;">
+    <input type="email" id="fb-email" placeholder="Your Email" style="padding:10px; border-radius:8px; border:1px solid #ccc; font-size:14px;">
+    <textarea id="fb-message" placeholder="Your Message" rows="4" style="padding:10px; border-radius:8px; border:1px solid #ccc; font-size:14px;"></textarea>
+    <button id="fb-send" style="
+        background: linear-gradient(135deg, #9b59b6, #6c5ce7);
+        color: #fff; border: none; padding: 12px; border-radius: 12px;
+        cursor: pointer; font-weight:bold; font-size:16px;
+        box-shadow:0 6px 15px rgba(0,0,0,0.3);
+        transition: transform 0.2s;
+    ">Send</button>
+</div>
+
+<script>
+const mainIcon = document.getElementById('main-icon');
+const subButtons = document.getElementById('sub-buttons');
+let open = false;
+
+mainIcon.addEventListener('click', () => {
+    open = !open;
+    if(open){
+        subButtons.style.opacity = '1';
+        subButtons.style.transform = 'translateY(0)';
+        mainIcon.style.transform = 'rotate(45deg) scale(1.1)';
+        document.querySelectorAll('.fb-btn').forEach((btn,i)=>{
+            btn.style.transform = 'translateX(0)';
+            btn.style.transitionDelay = `${i*0.05}s`;
+        });
+    } else {
+        subButtons.style.opacity = '0';
+        subButtons.style.transform = 'translateY(30px)';
+        mainIcon.style.transform = 'rotate(0deg) scale(1)';
+        document.querySelectorAll('.fb-btn').forEach(btn=> btn.style.transform = 'translateX(50px)');
+    }
+});
+
+// Close sub-buttons when clicking outside
+document.addEventListener('click', (e) => {
+    const wrapper = document.getElementById('floating-wrapper');
+    if(open && !wrapper.contains(e.target)){
+        subButtons.style.opacity = '0';
+        subButtons.style.transform = 'translateY(30px)';
+        mainIcon.style.transform = 'rotate(0deg) scale(1)';
+        document.querySelectorAll('.fb-btn').forEach(btn=> btn.style.transform = 'translateX(50px)');
+        open = false;
+    }
+});
+
+// Feedback form logic
+const fbButtons = document.querySelectorAll('.fb-btn');
+const fbForm = document.getElementById('feedback-form');
+const fbTitle = document.getElementById('fb-title');
+
+fbButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const type = btn.dataset.type;
+        fbTitle.textContent = type;
+        fbForm.style.display = 'flex';
+    });
+});
+
+// Close form
+document.getElementById('fb-close').addEventListener('click', () => {
+    fbForm.style.display = 'none';
+});
+
+// Send feedback via WhatsApp
+document.getElementById('fb-send').addEventListener('click', () => {
+    const type = fbTitle.textContent;
+    const name = document.getElementById('fb-name').value.trim();
+    const email = document.getElementById('fb-email').value.trim();
+    const message = document.getElementById('fb-message').value.trim();
+
+    if(!name || !email || !message){
+        alert('Please fill all fields!');
+        return;
+    }
+
+    const waNumber = "917888976762"; 
+    const text = `${type}:\nName: ${name}\nEmail: ${email}\nMessage: ${message}`;
+    const encodedText = encodeURIComponent(text);
+
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const waUrl = isMobile 
+        ? `https://api.whatsapp.com/send?phone=${waNumber}&text=${encodedText}` 
+        : `https://web.whatsapp.com/send?phone=${waNumber}&text=${encodedText}`;
+
+    window.open(waUrl, '_blank');
+
+    document.getElementById('fb-name').value = '';
+    document.getElementById('fb-email').value = '';
+    document.getElementById('fb-message').value = '';
+    fbForm.style.display = 'none';
+});
+</script>
+
+<!-- Font Awesome -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<!-- Guidelines Popup -->
+<div id="guidelinesPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); z-index:5000; justify-content:center; align-items:center;">
+  <div style="background:white; border-radius:15px; width:90%; max-width:500px; padding:20px; position:relative; color:#000;">
+    <span id="closeGuidelines" style="position:absolute; top:12px; right:16px; cursor:pointer; font-weight:bold; font-size:18px;">&times;</span>
+    <h2 style="text-align:center; color:#9b59b6; margin-bottom:20px;">Session Guidelines</h2>
+
+    <!-- Tabs -->
+    <div style="display:flex; justify-content:space-around; margin-bottom:20px;">
+      <button class="tabBtn active" data-tab="tab1" style="padding:8px 12px; border:none; border-bottom:2px solid #9b59b6; background:none; cursor:pointer; color:#9b59b6;">Privacy</button>
+      <button class="tabBtn" data-tab="tab2" style="padding:8px 12px; border:none; border-bottom:2px solid transparent; background:none; cursor:pointer; color:#9b59b6;">Rules</button>
+      <button class="tabBtn" data-tab="tab3" style="padding:8px 12px; border:none; border-bottom:2px solid transparent; background:none; cursor:pointer; color:#9b59b6;">Disclaimer</button>
+    </div>
+
+    <!-- Tab Contents -->
+    <div id="tab1" class="tabContent" style="display:block;">
+      <ul style="line-height:1.6; list-style:none; padding-left:0;">
+        <li>🔒 Your session is <strong>100% private & confidential</strong>.</li>
+        <li>No part of the session is shared with anyone.</li>
+      </ul>
+    </div>
+
+    <div id="tab2" class="tabContent" style="display:none;">
+      <ul style="line-height:1.6; list-style:none; padding-left:0;">
+        <li>⏳ Session ends automatically when time is up.</li>
+        <li>🚫 Inappropriate language/behavior = disconnect + no refund.</li>
+        <li>📶 Stable internet is client’s responsibility.</li>
+        <li>🙏 Late entry does not extend time.</li>
+      </ul>
+    </div>
+
+    <div id="tab3" class="tabContent" style="display:none;">
+      <ul style="line-height:1.6; list-style:none; padding-left:0;">
+        <li>Sessions provide <em>psychological guidance & wellness support</em>.</li>
+        <li>❗ Not for emergencies or crisis situations.</li>
+        <li>In emergency: <strong>call local hospital, helpline, or family immediately</strong>.</li>
+        <li>Not a substitute for <em>medical treatment or prescribed medication</em>.</li>
+      </ul>
+    </div>
+
+    <div style="text-align:center; margin-top:20px;">
+      <button id="joinSessionBtn" style="padding:10px 20px; border:none; border-radius:8px; background:#9b59b6; color:white; cursor:pointer;">Start Session</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const popup = document.getElementById('guidelinesPopup');
+  const openBtn = document.getElementById('openGuidelines');
+  const closeBtn = document.getElementById('closeGuidelines');
+  const tabs = document.querySelectorAll('.tabBtn');
+  const contents = document.querySelectorAll('.tabContent');
+
+  // Open/Close popup
+  openBtn.onclick = () => popup.style.display = 'flex';
+  closeBtn.onclick = () => popup.style.display = 'none';
+
+  // Tab switching
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => { t.classList.remove('active'); t.style.borderBottom='2px solid transparent'; });
+      tab.classList.add('active'); 
+      tab.style.borderBottom='2px solid #9b59b6';
+      contents.forEach(c => c.style.display='none');
+      document.getElementById(tab.dataset.tab).style.display='block';
+    });
+  });
+
+  // Redirect to home.html when session starts
+  document.getElementById('joinSessionBtn').addEventListener('click', () => {
+    window.location.href = 'home.html';
+  });
+</script>
+
+<!-- Join a Session Section End -->
+
+<!-- Book Next Session Section Start -->
+<section id="book-next-session" style="padding: 80px 20px; background-color: #dfdfdf; text-align: center;">
+  <div class="container" style="max-width: 900px; margin: 0 auto;">
+    <h2 style="font-size: 2.5rem; color: #222; margin-bottom: 20px;">📅 Book Your Next Session</h2>
+    <p style="font-size: 1.1rem; color: #555; line-height: 1.8; margin-bottom: 40px;">
+      Continue your progress with another session. Select a convenient date and time to keep your therapy journey on track.  
+    </p>
+
+    <!-- Book Next Button -->
+    <button id="book-next-btn" style="
+          padding: 15px 35px;
+          font-size: 1.2rem;
+          color: #fff;
+          background: linear-gradient(145deg, #0ed1df, #5e2ca5);
+          border-radius: 8px;
+          border: none;
+          cursor: pointer;
+          box-shadow: 0 4px 15px rgba(94,44,165,0.5);
+          transition: all 0.3s;
+    ">
+      Book Next
+    </button>
+  </div>
+</section>
+
+<script>
+const phoneNumber = "917888976762"; // Your WhatsApp number
+const message = "Hello Dr. Shaveta, I would like to book my next therapy session.";
+
+document.getElementById('book-next-btn').addEventListener('click', () => {
+    const encodedMessage = encodeURIComponent(message);
+
+    // Detect mobile
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    // WhatsApp URL
+    let waUrl;
+    if (isMobile) {
+        // Mobile app
+        waUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+    } else {
+        // WhatsApp Web
+        waUrl = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+    }
+
+    window.open(waUrl, '_blank');
+});
+
+// Hover glow effect
+const btn = document.getElementById('book-next-btn');
+btn.addEventListener('mouseover', () => {
+    btn.style.boxShadow = '0 0 20px #5e2ca5, 0 0 40px #0ed1df55';
+});
+btn.addEventListener('mouseout', () => {
+    btn.style.boxShadow = '0 4px 15px rgba(94,44,165,0.5)';
+});
+</script>
+
+<!-- Book Next Session Section End -->
+
+
+<!-- Social Media Section End -->
+<!-- Font Awesome (add in <head> if not already included) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Font Awesome (include in <head> if not already) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Modern Footer Start -->
+<footer class="modern-footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <h2>Dear Therapist</h2>
+      <p>Expert counseling for Anxiety, Stress, Relationships & Emotional Healing – available online & offline.</p>
+      
+      <!-- Social Icons -->
+      <div class="footer-social">
+        <a href=" https://www.instagram.com/deartherapist_?igsh=Mng1MWw1N3J2d3k5&utm_source=qr" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://youtube.com/@dr.shavetabhardwaj-h5d?si=lroCjrn8cpcyzhhj" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+        <a href="https://wa.me/+917888976762" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="https://deartherapist.in/" target="_blank"><i class="fa-solid fa-globe"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom" style="margin-top: -5px;">
+    <p>&copy; 2025 Dear Therapist. All Rights Reserved.</p>
+  </div>
+</footer>
+
+<!-- Styles -->
+<style>
+  .modern-footer {
+    background: #1a1333;
+    color: #fff;
+    padding: 50px 20px 20px;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .footer-container {
+    max-width: 1100px;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .footer-brand h2 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    color: #ffd700;
+  }
+
+  .footer-brand p {
+    font-size: 1rem;
+    color: #ccc;
+    max-width: 500px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .footer-social {
+    margin-bottom: 20px;
+  }
+
+  .footer-social a {
+    font-size: 1.8rem;
+    color: #fff;
+    margin: 0 12px;
+    transition: transform 0.3s, color 0.3s;
+  }
+
+  .footer-social a:hover {
+    transform: scale(1.3);
+    color: #ffd700;
+  }
+
+  .footer-cta {
+    display: inline-block;
+    background: #ffd700;
+    color: #1a1333;
+    padding: 12px 28px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background 0.3s, transform 0.3s;
+  }
+
+  .footer-cta:hover {
+    background: #e6c300;
+    transform: scale(1.05);
+  }
+
+  .footer-bottom {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.9rem;
+    color: #aaa;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .footer-brand h2 {
+      font-size: 1.6rem;
+    }
+
+    .footer-brand p {
+      font-size: 0.95rem;
+      max-width: 90%;
+    }
+
+    .footer-social a {
+      font-size: 1.5rem;
+      margin: 0 10px;
+    }
+
+    .footer-cta {
+      padding: 10px 22px;
+      font-size: 0.95rem;
+    }
+  }
+</style>
+<!-- Modern Footer End -->
+
+
+<style>
+  #social-media a:hover {
+    transform: scale(1.2);
+    filter: brightness(1.2);
+  }
+</style>
+
+  <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileMenu = document.getElementById("mobileMenu");
+    const closeBtn = document.getElementById("closeBtn");
+    const overlay = document.getElementById("overlay");
+
+    menuToggle.addEventListener("click", () => {
+      mobileMenu.classList.add("show");
+      overlay.classList.add("show");
+    });
+    closeBtn.addEventListener("click", closeMenu);
+    overlay.addEventListener("click", closeMenu);
+    function closeMenu() {
+      mobileMenu.classList.remove("show");
+      overlay.classList.remove("show");
+    }
+  </script>
+</body>
+</html>

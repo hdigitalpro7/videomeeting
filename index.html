@@ -1,233 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Start Meeting</title>
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Therapy Room</title>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #ffffff;
+      color: #000;
+      flex-direction: column;
+      gap: 40px;
+      padding: 40px 20px;
+    }
+    .panel {
+      position: relative;
+      width: 420px;
+      padding: 35px 30px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(155, 89, 182, 0.3);
+      box-shadow: 0 0 30px rgba(155, 89, 182, 0.15);
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      background: linear-gradient(90deg, #9b59b6, #5e2ca5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, #9b59b6, #5e2ca5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+    button {
+      padding: 12px 28px;
+      border: none;
+      background: linear-gradient(90deg, #9b59b6, #5e2ca5);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 30px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: 0.3s;
+      box-shadow: 0 0 15px rgba(155, 89, 182, 0.5);
+    }
+    button:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 0 25px rgba(155, 89, 182, 0.8);
+    }
+    select {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #aaa;
+      outline: none;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: 500;
+      background: #f0f0f0;
+      color: #5e2ca5;
+      transition: 0.3s;
+    }
+    select:focus {
+      border-color: #9b59b6;
+      box-shadow: 0 0 10px #9b59b6;
+    }
+    a {
+      margin-top: 15px;
+      display: inline-block;
+      word-break: break-word;
+      color: #9b59b6;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    a:hover { text-shadow: 0 0 10px #9b59b6; }
+    .loader {
+      display: none;
+      margin-top: 15px;
+      font-size: 1rem;
+      color: #9b59b6;
+    }
+    .link-container {
+      display: none;
+      margin-top: 20px;
+    }
+    .social-icons {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+    }
+    .social-icons a {
+      width: 45px;
+      height: 45px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #9b59b6;
+      border-radius: 50%;
+      color: #9b59b6;
+      font-size: 1.3rem;
+      transition: 0.3s;
+    }
+    .social-icons a:hover {
+      background: #9b59b6;
+      color: #fff;
+      transform: scale(1.2) rotate(8deg);
+      box-shadow: 0 0 15px #9b59b6;
+    }.logo-container {
+  display: flex;
+  justify-content: center; /* horizontally center */
+  align-items: center;     /* vertically center */
+  height: 150px;           /* adjust as needed */
+}
 
-<style>
-  body {
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
-    color: #fff;
-    overflow: hidden;
-  }
+.logo {
+  max-width: 100%;         /* make responsive */
+  height: 300px;
+}
 
-  /* Floating gradient circles */
-  .bg-circle {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    opacity: 0.5;
-    animation: float 10s infinite alternate ease-in-out;
-  }
-  .circle1 { width: 350px; height: 350px; background: #ffd700; top: -80px; left: -80px; }
-  .circle2 { width: 300px; height: 300px; background: #ff4d4d; bottom: -100px; right: -70px; }
-
-  @keyframes float {
-    from { transform: translateY(0); }
-    to { transform: translateY(40px); }
-  }
-
-  .panel {
-    position: relative;
-    width: 420px;
-    padding: 40px 35px;
-    border-radius: 22px;
-    background: rgba(15, 15, 15, 0.85);
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
-    backdrop-filter: blur(10px);
-    text-align: center;
-    animation: fadeIn 1s ease forwards;
-    z-index: 2;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.3rem;
-    margin-bottom: 25px;
-    background: linear-gradient(90deg, #ffd700, #ff8800);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-
-  button {
-    padding: 12px 28px;
-    border: none;
-    background: linear-gradient(90deg, #ffd700, #ff8800);
-    color: #111;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 30px;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: 0.3s;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-  }
-
-  button:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
-  }
-
-  label {
-    margin-top: 18px;
-    font-weight: 600;
-    display: block;
-    text-align: left;
-    color: #eee;
-  }
-
-  select {
-    margin-top: 10px;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #444;
-    outline: none;
-    width: 100%;
-    font-size: 1rem;
-    font-weight: 500;
-    background: #1c1c1c;
-    color: #ffd700;
-    transition: 0.3s;
-  }
-
-  select:focus {
-    border-color: #ffd700;
-    box-shadow: 0 0 10px #ffd700;
-  }
-
-  a {
-    margin-top: 15px;
-    display: inline-block;
-    word-break: break-word;
-    color: #ffd700;
-    font-weight: bold;
-    transition: 0.3s;
-  }
-
-  a:hover {
-    text-shadow: 0 0 10px #ffd700;
-  }
-
-  .picker-container, .link-container {
-    display: none;
-    flex-direction: column;
-    margin-top: 20px;
-    text-align: left;
-  }
-
-  /* Social Icons */
-  .social-icons {
-    margin-top: 35px;
-    display: flex;
-    justify-content: center;
-    gap: 18px;
-  }
-
-  .social-icons a {
-    width: 45px;
-    height: 45px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #ffd700;
-    border-radius: 50%;
-    color: #ffd700;
-    font-size: 1.3rem;
-    transition: 0.3s;
-  }
-
-  .social-icons a:hover {
-    background: #ffd700;
-    color: #111;
-    transform: scale(1.2) rotate(8deg);
-    box-shadow: 0 0 15px #ffd700;
-  }
-</style>
+  </style>
 </head>
 <body>
-
-<!-- Animated Background Circles -->
-<div class="bg-circle circle1"></div>
-<div class="bg-circle circle2"></div>
-
-<div class="panel">
-  <h1>Start Meeting</h1>
-  <button id="startBtn">Start Meeting</button>
-
-  <div class="picker-container" id="pickerContainer">
-    <label>Select Duration (Minutes):</label>
-    <select id="meetingDuration">
-      <option value="15">15 Minutes</option>
-      <option value="30">30 Minutes</option>
-      <option value="60">60 Minutes</option>
-      <option value="90">90 Minutes</option>
-      <option value="120">120 Minutes</option>
-      <option value="180">180 Minutes</option>
-    </select>
-    <button id="generateLinkBtn">Generate Link</button>
-  </div>
-
-  <div class="link-container" id="linkContainer">
-    <p>Your Meeting Link:</p>
-    <a href="#" id="meetingLink" target="_blank"></a>
-    <button id="copyBtn">Copy Link</button>
-  </div>
-
-  <!-- Social Media Icons -->
-  <div class="social-icons">
-    <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
-    <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
-    <a href="https://wa.me/919876543210" target="_blank"><i class="fab fa-whatsapp"></i></a>
-    <a href="https://yourwebsite.com" target="_blank"><i class="fas fa-globe"></i></a>
-  </div>
+  <div class="panel">
+    <div class="logo-container">
+  <img src="LOGO DEAR THERAPIST (1).png" alt="Logo" class="logo">
 </div>
 
+    <h2>🌸 Welcome to Dr Shaveta’s Therapy Room 🌸</h2>
+    <h1>Set Duration & Generate Link</h1>
+    <label>Select Duration (Minutes):</label>
+    <!-- home.html -->
+<select id="meetingDuration">
+  <option value="15">15 Minutes</option>
+  <option value="30">30 Minutes</option>
+  <option value="60">60 Minutes</option>
+  <option value="90">90 Minutes</option>
+  <option value="120">120 Minutes</option>
+  <option value="180">180 Minutes</option>
+</select>
+
+
+
 <script>
-  const startBtn = document.getElementById('startBtn');
-  const pickerContainer = document.getElementById('pickerContainer');
-  const generateLinkBtn = document.getElementById('generateLinkBtn');
-  const linkContainer = document.getElementById('linkContainer');
-  const meetingLink = document.getElementById('meetingLink');
-  const copyBtn = document.getElementById('copyBtn');
-
-  startBtn.addEventListener('click', () => {
-    pickerContainer.style.display = 'flex';
-  });
-
-  generateLinkBtn.addEventListener('click', () => {
-    const duration = document.getElementById('meetingDuration').value;
-    const meetingId = Math.random().toString(36).substring(2, 10);
-    const link = `call.html?meetingId=${meetingId}&duration=${duration}`;
-    meetingLink.href = link;
-    meetingLink.textContent = link;
-    linkContainer.style.display = 'flex';
-  });
-
-  copyBtn.addEventListener('click', () => {
-    navigator.clipboard.writeText(meetingLink.href).then(() => {
-      alert('✅ Meeting link copied!');
-    });
-  });
+function startMeeting() {
+  const duration = document.getElementById("meetingDuration").value;
+  const room = "testroom"; // ya user input se lo
+  // seconds me bhejenge
+  window.location.href = `call.html?room=${room}&duration=${duration}`;
+}
 </script>
 
+
+    <button id="generateLinkBtn">Generate Link</button>
+    <div class="loader" id="loader">⏳ Generating link... please wait 5s</div>
+
+    <div class="link-container" id="linkContainer">
+      <p>Your Meeting Link:</p>
+      <a href="#" id="meetingLink" target="_blank"></a>
+      <button id="copyBtn">Copy Link</button>
+    </div>
+
+    <div class="social-icons">
+      <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
+      <a href="https://wa.me/919876543210" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      <a href="https://yourwebsite.com" target="_blank"><i class="fas fa-globe"></i></a>
+    </div>
+  </div>
+
+  <script>
+    const generateLinkBtn = document.getElementById('generateLinkBtn');
+    const linkContainer = document.getElementById('linkContainer');
+    const meetingLink = document.getElementById('meetingLink');
+    const copyBtn = document.getElementById('copyBtn');
+    const loader = document.getElementById('loader');
+
+    generateLinkBtn.addEventListener('click', () => {
+      const duration = document.getElementById('meetingDuration').value;
+      const meetingId = Math.random().toString(36).substring(2, 10);
+      const link = `front.html?meetingId=${meetingId}&duration=${duration}`;
+
+      loader.style.display = 'block';
+      linkContainer.style.display = 'none';
+
+      setTimeout(() => {
+        loader.style.display = 'none';
+        meetingLink.href = link;
+        meetingLink.textContent = link;
+        linkContainer.style.display = 'block';
+      }, 5000);
+    });
+
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(meetingLink.href).then(() => {
+        alert('✅ Meeting link copied!');
+      });
+    });
+  </script>
 </body>
 </html>
