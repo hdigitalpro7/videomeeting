@@ -143,23 +143,6 @@ window.onload = function() {
     timerInterval = setInterval(updateTimer,1000);
   }
 };
-window.addEventListener('load', () => {
-  const params = new URLSearchParams(window.location.search);
-  const openedId = params.get('meetingId');
-  const active = JSON.parse(localStorage.getItem("activeMeeting") || "{}");
-
-  if (!active.id || active.id !== openedId) {
-    document.body.innerHTML = "<h2 style='color:red;text-align:center;margin-top:50px;'>❌ This meeting link has expired</h2>";
-  } else {
-    const pass = prompt("🔑 Enter meeting password:");
-    if (pass !== active.password) {
-      document.body.innerHTML = "<h2 style='color:red;text-align:center;margin-top:50px;'>❌ Wrong password, access denied</h2>";
-    } else {
-      // ✅ Allow entry
-      localStorage.removeItem("activeMeeting"); // one-time access
-    }
-  }
-});
 
 </script>
 
