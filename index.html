@@ -202,7 +202,7 @@
   </div>
 
  <script>
-  (function() {
+(function() {
   const BASE = 'https://hdigitalpro7.github.io/videomeeting';
   const generateLinkBtn = document.getElementById('generateLinkBtn');
   const linkContainer = document.getElementById('linkContainer');
@@ -210,7 +210,6 @@
   const copyBtn = document.getElementById('copyBtn');
   const loader = document.getElementById('loader');
 
-  // Store latest meetingId in localStorage (only latest works)
   function setActiveMeeting(meetingId, duration) {
     localStorage.setItem("activeMeeting", JSON.stringify({
       id: meetingId,
@@ -231,12 +230,10 @@
     return Math.random().toString(36).substring(2, 2 + len);
   }
 
-  // Generate link
   generateLinkBtn.addEventListener('click', () => {
     const duration = document.getElementById('meetingDuration').value;
     const meetingId = makeId(8);
-
-    setActiveMeeting(meetingId, duration); // save only latest
+    setActiveMeeting(meetingId, duration);
 
     const path = '/WEB_UIKITS.html';
     const link = `${BASE}${path}?meetingId=${encodeURIComponent(meetingId)}&duration=${encodeURIComponent(duration)}`;
@@ -252,7 +249,6 @@
     }, 700);
   });
 
-  // Copy
   copyBtn.addEventListener('click', () => {
     const url = meetingLink.href || '';
     if (!url) return alert('No meeting link to copy. Generate a link first.');
@@ -263,7 +259,6 @@
     });
   });
 
-  // Check on page load (inside videomeeting/WEB_UIKITS.html)
   window.addEventListener('load', () => {
     const params = new URLSearchParams(window.location.search);
     const openedId = params.get('meetingId');
@@ -275,17 +270,6 @@
     }
   });
 })();
-
-function setActiveMeeting(meetingId, duration) {
-  localStorage.setItem("activeMeeting", JSON.stringify({
-    id: meetingId,
-    duration: duration,
-    created: Date.now(),
-    password: makeId(6),   // अगर password चाहिए
-    remainingJoins: 2      // 🔹 सिर्फ 2 बार join की अनुमति
-  }));
-}
-
 
 </script>
 
