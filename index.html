@@ -19,7 +19,7 @@
       background: #ffffff;
       color: #000;
       flex-direction: column;
-      gap: 40px;
+      gap: 20px;
       padding: 40px 20px;
     }
     .panel {
@@ -51,6 +51,23 @@
       -webkit-text-fill-color: transparent;
       font-weight: 700;
     }
+    input, select {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #aaa;
+      outline: none;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: 500;
+      background: #f0f0f0;
+      color: #5e2ca5;
+      transition: 0.3s;
+    }
+    input:focus, select:focus {
+      border-color: #9b59b6;
+      box-shadow: 0 0 10px #9b59b6;
+    }
     button {
       padding: 12px 28px;
       border: none;
@@ -67,23 +84,6 @@
     button:hover {
       transform: translateY(-3px) scale(1.05);
       box-shadow: 0 0 25px rgba(155, 89, 182, 0.8);
-    }
-    select {
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #aaa;
-      outline: none;
-      width: 100%;
-      font-size: 1rem;
-      font-weight: 500;
-      background: #f0f0f0;
-      color: #5e2ca5;
-      transition: 0.3s;
-    }
-    select:focus {
-      border-color: #9b59b6;
-      box-shadow: 0 0 10px #9b59b6;
     }
     a {
       margin-top: 15px;
@@ -116,7 +116,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      border: 2px solid #9b59b6 transparent;
       border-radius: 50%;
       color: #9b59b6;
       font-size: 1.3rem;
@@ -161,8 +160,11 @@
 
     <h2>🌸 Welcome to Dr Shaveta’s Therapy Room 🌸</h2>
     <h1>Set Duration & Generate Link</h1>
-    <label>Select Duration (Minutes):</label>
 
+    <label>Enter Password:</label>
+    <input type="password" id="meetingPassword" placeholder="Enter password">
+
+    <label>Select Duration (Minutes):</label>
     <select id="meetingDuration">
       <option value="5">5 Minute</option>
       <option value="10">10 Minute</option>
@@ -204,24 +206,24 @@
 <script>
 (function() {
   const BASE = 'https://hdigitalpro7.github.io/videomeeting';
+  const PASSWORD = "Wealthy@62"; // Password to generate link
+
   const generateLinkBtn = document.getElementById('generateLinkBtn');
   const linkContainer = document.getElementById('linkContainer');
   const meetingLink = document.getElementById('meetingLink');
   const copyBtn = document.getElementById('copyBtn');
   const loader = document.getElementById('loader');
 
-  // Generate random ID
   function makeId(len = 8) {
     return Math.random().toString(36).substring(2, 2 + len);
   }
 
-  // Store active meeting in localStorage
   function setActiveMeeting(meetingId, duration) {
     localStorage.setItem("activeMeeting", JSON.stringify({
       id: meetingId,
       duration: duration,
       created: Date.now(),
-      joinCount: 0 // initialize join count
+      joinCount: 0
     }));
   }
 
@@ -234,6 +236,12 @@
   }
 
   generateLinkBtn.addEventListener('click', () => {
+    const entered = document.getElementById('meetingPassword').value;
+    if (entered !== PASSWORD) {
+      alert("❌ Incorrect password!");
+      return;
+    }
+
     const duration = document.getElementById('meetingDuration').value;
     const meetingId = makeId(8);
 
@@ -263,7 +271,6 @@
     });
   });
 
-  // Check join count on page load
   window.addEventListener('load', () => {
     const params = new URLSearchParams(window.location.search);
     const openedId = params.get('meetingId');
@@ -276,22 +283,16 @@
       return;
     }
 
-    // Increment join count
     active.joinCount = (active.joinCount || 0) + 1;
 
     if (active.joinCount > 2) {
-      // Expire link if joined more than 2 times
       document.body.innerHTML = "<h2 style='color:red;text-align:center;margin-top:50px;'>❌ This meeting link has expired</h2>";
       localStorage.removeItem('activeMeeting');
     } else {
-      // Save updated join count
       localStorage.setItem('activeMeeting', JSON.stringify(active));
     }
   });
-
 })();
 </script>
-
-
 </body>
 </html>
