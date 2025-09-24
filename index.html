@@ -201,76 +201,103 @@
     </div>
   </div>
 
-  <!-- SCRIPTS -->
-  <script>
-    (function() {
-      // BASE domain for generated links
-      const BASE = 'https://meet.deartherapist.in';
+ <script>
+  (function() {
+  const BASE = 'https://hdigitalpro7.github.io/videomeeting';
+  const generateLinkBtn = document.getElementById('generateLinkBtn');
+  const linkContainer = document.getElementById('linkContainer');
+  const meetingLink = document.getElementById('meetingLink');
+  const copyBtn = document.getElementById('copyBtn');
+  const loader = document.getElementById('loader');
 
-      const generateLinkBtn = document.getElementById('generateLinkBtn');
-      const linkContainer = document.getElementById('linkContainer');
-      const meetingLink = document.getElementById('meetingLink');
-      const copyBtn = document.getElementById('copyBtn');
-      const loader = document.getElementById('loader');
+  // Store latest meetingId in localStorage (only latest works)
+  function setActiveMeeting(meetingId, duration) {
+    localStorage.setItem("activeMeeting", JSON.stringify({
+      id: meetingId,
+      duration: duration,
+      created: Date.now()
+    }));
+  }
 
-      // Helper to generate a friendly random ID
-      function makeId(len = 8) {
-        return Math.random().toString(36).substring(2, 2 + len);
+  function getActiveMeeting() {
+    try {
+      return JSON.parse(localStorage.getItem("activeMeeting")) || null;
+    } catch {
+      return null;
+    }
+  }
+
+  function makeId(len = 8) {
+    return Math.random().toString(36).substring(2, 2 + len);
+  }
+
+  // Generate link
+  generateLinkBtn.addEventListener('click', () => {
+    const duration = document.getElementById('meetingDuration').value;
+    const meetingId = makeId(8);
+
+    setActiveMeeting(meetingId, duration); // save only latest
+
+    const path = '/WEB_UIKITS.html';
+    const link = `${BASE}${path}?meetingId=${encodeURIComponent(meetingId)}&duration=${encodeURIComponent(duration)}`;
+
+    loader.style.display = 'block';
+    linkContainer.style.display = 'none';
+
+    setTimeout(() => {
+      loader.style.display = 'none';
+      meetingLink.href = link;
+      meetingLink.textContent = link;
+      linkContainer.style.display = 'block';
+    }, 700);
+  });
+
+  // Copy
+  copyBtn.addEventListener('click', () => {
+    const url = meetingLink.href || '';
+    if (!url) return alert('No meeting link to copy. Generate a link first.');
+    navigator.clipboard.writeText(url).then(() => {
+      alert('✅ Meeting link copied!');
+    }).catch(() => {
+      alert('Could not copy automatically. Copy manually: ' + url);
+    });
+  });
+
+  // Check on page load (inside videomeeting/WEB_UIKITS.html)
+  window.addEventListener('load', () => {
+    const params = new URLSearchParams(window.location.search);
+    const openedId = params.get('meetingId');
+    if (openedId) {
+      const active = getActiveMeeting();
+      if (!active || active.id !== openedId) {
+        document.body.innerHTML = "<h2 style='color:red;text-align:center;margin-top:50px;'>❌ This meeting link has expired</h2>";
       }
+    }
+  });
+})();
+// Generate link
+function generateMeeting() {
+  const meetingId = makeId(8);
+  const password = makeId(6); // random 6 char password
 
-      // Generate link handler
-      generateLinkBtn.addEventListener('click', () => {
-        const duration = document.getElementById('meetingDuration').value;
-        const meetingId = makeId(8); // random meeting id
-        const path = '/WEB_UIKITS.html'; // adjust to the correct path on your meet domain
-        const link = `${BASE}${path}?meetingId=${encodeURIComponent(meetingId)}&duration=${encodeURIComponent(duration)}`;
+  localStorage.setItem("activeMeeting", JSON.stringify({ id: meetingId, password }));
 
-        // show loader briefly for UX
-        loader.style.display = 'block';
-        linkContainer.style.display = 'none';
+  const link = `${BASE}/WEB_UIKITS.html?meetingId=${meetingId}`;
+  meetingLink.href = link;
+  meetingLink.textContent = `${link}  (Password: ${password})`;
+}
+function setActiveMeeting(meetingId, duration) {
+  localStorage.setItem("activeMeeting", JSON.stringify({
+    id: meetingId,
+    duration: duration,
+    created: Date.now(),
+    password: makeId(6),   // अगर password चाहिए
+    remainingJoins: 2      // 🔹 सिर्फ 2 बार join की अनुमति
+  }));
+}
 
-        setTimeout(() => {
-          loader.style.display = 'none';
-          meetingLink.href = link;
-          meetingLink.textContent = link;
-          linkContainer.style.display = 'block';
-        }, 700); // short delay (change/remove if you want instant)
-      });
 
-      // Copy handler
-      copyBtn.addEventListener('click', () => {
-        const url = meetingLink.href || '';
-        if (!url) {
-          alert('No meeting link to copy. Generate a link first.');
-          return;
-        }
-        navigator.clipboard.writeText(url).then(() => {
-          alert('✅ Meeting link copied!');
-        }).catch(() => {
-          alert('Could not copy automatically—please copy manually: ' + url);
-        });
-      });
+</script>
 
-      // On page load: if URL already has meetingId, ensure it's normalized in address bar
-      window.addEventListener('load', () => {
-        const params = new URLSearchParams(window.location.search);
-        const existingId = params.get('meetingId');
-        if (!existingId) {
-          // add a meetingId to URL so others can join via current page (optional)
-          const roomID = makeId(8);
-          const newUrl = `${window.location.origin}${window.location.pathname}?meetingId=${roomID}`;
-          window.history.replaceState({}, '', newUrl);
-        } else {
-          // If present, you could auto-show a join link:
-          const duration = params.get('duration') || document.getElementById('meetingDuration').value;
-          const path = '/WEB_UIKITS.html';
-          const full = `${BASE}${path}?meetingId=${existingId}&duration=${duration}`;
-          meetingLink.href = full;
-          meetingLink.textContent = full;
-          linkContainer.style.display = 'block';
-        }
-      });
-    })();
-  </script>
 </body>
 </html>
