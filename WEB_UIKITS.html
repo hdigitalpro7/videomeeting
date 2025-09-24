@@ -160,39 +160,6 @@ window.addEventListener('load', () => {
     }
   }
 });
-window.addEventListener('load', () => {
-  const params = new URLSearchParams(window.location.search);
-  const openedId = params.get('meetingId');
-  let active = JSON.parse(localStorage.getItem("activeMeeting") || "{}");
-
-  if (!active.id || active.id !== openedId) {
-    document.body.innerHTML = "<h2 style='color:red;text-align:center;margin-top:50px;'>❌ This meeting link has expired</h2>";
-  } else {
-    // अगर join limit खत्म हो गई
-    if (active.remainingJoins <= 0) {
-      document.body.innerHTML = "<h2 style='color:red;text-align:center;margin-top:50px;'>❌ This link can no longer be used</h2>";
-      return;
-    }
-
-    // Password check
-    const pass = prompt("🔑 Enter Meeting Password:");
-    if (pass !== active.password) {
-      document.body.innerHTML = "<h2 style='color:red;text-align:center;margin-top:50px;'>❌ Wrong password, access denied</h2>";
-    } else {
-      // ✅ Allow entry and reduce counter
-      active.remainingJoins -= 1;
-
-      // अगर 0 हो गया तो पूरी तरह expire कर दो
-      if (active.remainingJoins <= 0) {
-        localStorage.removeItem("activeMeeting");
-      } else {
-        localStorage.setItem("activeMeeting", JSON.stringify(active));
-      }
-
-      document.body.innerHTML = "<h1>🎉 Welcome to the Secure Meeting Room</h1><p>Meeting ID: "+active.id+"</p><p>Remaining joins: "+active.remainingJoins+"</p>";
-    }
-  }
-});
 
 </script>
 
