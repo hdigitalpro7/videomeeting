@@ -201,7 +201,7 @@
     </div>
   </div>
 
- <script>
+<script>
 (function() {
   const BASE = 'https://hdigitalpro7.github.io/videomeeting';
   const generateLinkBtn = document.getElementById('generateLinkBtn');
@@ -210,11 +210,18 @@
   const copyBtn = document.getElementById('copyBtn');
   const loader = document.getElementById('loader');
 
+  // Generate random ID
+  function makeId(len = 8) {
+    return Math.random().toString(36).substring(2, 2 + len);
+  }
+
+  // Store active meeting in localStorage
   function setActiveMeeting(meetingId, duration) {
     localStorage.setItem("activeMeeting", JSON.stringify({
       id: meetingId,
       duration: duration,
-      created: Date.now()
+      created: Date.now(),
+      joinCount: 0 // initialize join count
     }));
   }
 
@@ -224,10 +231,6 @@
     } catch {
       return null;
     }
-  }
-
-  function makeId(len = 8) {
-    return Math.random().toString(36).substring(2, 2 + len);
   }
 
   generateLinkBtn.addEventListener('click', () => {
@@ -260,19 +263,35 @@
     });
   });
 
+  // Check join count on page load
   window.addEventListener('load', () => {
     const params = new URLSearchParams(window.location.search);
     const openedId = params.get('meetingId');
-    if (openedId) {
-      const active = getActiveMeeting();
-      if (!active || active.id !== openedId) {
-        document.body.innerHTML = "<h2 style='color:red;text-align:center;margin-top:50px;'>❌ This meeting link has expired</h2>";
-      }
+    if (!openedId) return;
+
+    const active = getActiveMeeting();
+
+    if (!active || active.id !== openedId) {
+      document.body.innerHTML = "<h2 style='color:red;text-align:center;margin-top:50px;'>❌ This meeting link has expired</h2>";
+      return;
+    }
+
+    // Increment join count
+    active.joinCount = (active.joinCount || 0) + 1;
+
+    if (active.joinCount > 2) {
+      // Expire link if joined more than 2 times
+      document.body.innerHTML = "<h2 style='color:red;text-align:center;margin-top:50px;'>❌ This meeting link has expired</h2>";
+      localStorage.removeItem('activeMeeting');
+    } else {
+      // Save updated join count
+      localStorage.setItem('activeMeeting', JSON.stringify(active));
     }
   });
-})();
 
+})();
 </script>
+
 
 </body>
 </html>
