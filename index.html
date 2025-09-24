@@ -233,6 +233,7 @@
   generateLinkBtn.addEventListener('click', () => {
     const duration = document.getElementById('meetingDuration').value;
     const meetingId = makeId(8);
+
     setActiveMeeting(meetingId, duration);
 
     const path = '/WEB_UIKITS.html';
