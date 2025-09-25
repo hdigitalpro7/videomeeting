@@ -48,7 +48,7 @@
     animation: fadeInScale 0.4s ease;
   }
   #popup p { color: #d32f2f; font-weight: 500; margin-bottom: 15px; }
-  #popup button { background:#27ae60; }
+  #popup button { background:#27ae60; color:#fff; }
 
   @keyframes fadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
   @keyframes fadeInScale { from { opacity:0; transform: scale(0.8); } to { opacity:1; transform: scale(1); } }
@@ -107,24 +107,33 @@
 </div>
 
 <!-- Left Panel -->
-<div class="panel" id="mainPanel">
-  <div class="logo-container">
-    <img src="LOGO DEAR THERAPIST (1).png" alt="Logo" class="logo">
-  </div>
-  <h2>Set Duration & Generate Link</h2>
-  <input type="password" id="password" placeholder="Enter Password" style="width: 90%;">
-  <select id="duration">
-    <option value="5">5 Minutes</option>
-    <option value="10">10 Minutes</option>
-    <option value="15">15 Minutes</option>
-    <option value="30" selected>30 Minutes</option>
-    <option value="60">60 Minutes</option>
-  </select>
-  <button id="generateBtn">Generate Link</button>
-  <div id="linkDiv" style="display:none;">
-    <p><strong>Your Meeting Link:</strong></p>
-    <a href="#" id="meetingLink" target="_blank"></a>
-  </div>
+<div class="panel">
+    <div class="logo-container">
+      <img src="LOGO DEAR THERAPIST (1).png" alt="Logo" class="logo" />
+    </div>
+
+    <h2>Set Duration & Generate Link</h2>
+
+    <label>Select Duration (Minutes):</label>
+    <select id="meetingDuration">
+      <option value="5">5 Minute</option>
+      <option value="10">10 Minute</option>
+      <option value="15">15 Minutes</option>
+      <option value="30" selected>30 Minutes</option>
+      <option value="60">60 Minutes</option>
+      <option value="90">90 Minutes</option>
+      <option value="120">120 Minutes</option>
+      <option value="180">180 Minutes</option>
+    </select>
+
+    <button id="generateLinkBtn">Generate Link</button>
+
+    <div class="link-container" id="linkContainer" style="display:none;">
+      <p>Your Meeting Link:</p>
+      <a href="#" id="meetingLink" target="_blank"></a>
+      <br><br>
+      <button id="copyBtn">Copy Link</button>
+    </div>
 </div>
 
 <!-- Right Panel -->
@@ -150,70 +159,67 @@
 </div>
 
 <script>
-const PASSWORD = "Wealthy@62";
 const BASE = "https://hdigitalpro7.github.io/videomeeting/WEB_UIKITS.html";
 
-// Generate random meeting ID
-function makeId(len = 8) {
-  return Math.random().toString(36).substring(2, 2 + len);
+// Generate a unique meeting ID every time
+function makeUniqueId(len = 12) {
+  return 'meet-' + Math.random().toString(36).substring(2, 2 + len);
 }
 
-const generateBtn = document.getElementById('generateBtn');
+const generateBtn = document.getElementById('generateLinkBtn');
 const popup = document.getElementById('popup');
 const rebookBtn = document.getElementById('rebookBtn');
+const linkContainer = document.getElementById('linkContainer');
+const meetingLink = document.getElementById('meetingLink');
+const meetingDuration = document.getElementById('meetingDuration');
 
+// Generate new link
 function generateLink() {
-  const pass = document.getElementById('password').value;
-  const duration = document.getElementById('duration').value;
-
-  if (pass !== PASSWORD) {
-    alert("❌ Incorrect password");
-    return;
-  }
-
-  const meetingId = makeId();
+  const duration = meetingDuration.value;
+  const meetingId = makeUniqueId(); // Always a new ID
   const link = `${BASE}?meetingId=${meetingId}&duration=${duration}`;
 
-  // Save new meeting in localStorage
-  localStorage.setItem("activeMeeting", JSON.stringify({ id: meetingId, duration: duration, joined: false }));
+  // Save only one active meeting — old links expire automatically
+  localStorage.setItem("activeMeeting", JSON.stringify({
+    id: meetingId,
+    duration: duration,
+    joined: false
+  }));
 
-  const linkA = document.getElementById('meetingLink');
-  linkA.href = link;
-  linkA.textContent = link;
-  document.getElementById('linkDiv').style.display = 'block';
+  meetingLink.href = link;
+  meetingLink.textContent = link;
+  linkContainer.style.display = 'block';
 }
 
-// Generate button click
-generateBtn.addEventListener('click', () => {
-  const active = JSON.parse(localStorage.getItem("activeMeeting"));
-  if (active && !active.joined) {
-    // Show popup if active meeting exists
-    popup.style.display = 'flex';
-  } else {
-    generateLink();
-  }
-});
+// Button click generates a new link every time
+generateBtn.addEventListener('click', generateLink);
 
-// Rebook button click
+// Rebook button generates a fresh new link
 rebookBtn.addEventListener('click', () => {
   popup.style.display = 'none';
   generateLink();
 });
 
-// Logic for WEB_UIKITS.html page
+// Copy link
+document.getElementById('copyBtn').addEventListener('click', () => {
+  navigator.clipboard.writeText(meetingLink.href);
+  alert("✅ Link copied to clipboard!");
+});
+
+// WEB_UIKITS.html logic — only allow first-time join
 if (window.location.pathname.endsWith("WEB_UIKITS.html")) {
   const params = new URLSearchParams(window.location.search);
   const meetingId = params.get("meetingId");
   const active = JSON.parse(localStorage.getItem("activeMeeting"));
 
   if (!active || active.id !== meetingId) {
-    // Redirect invalid/expired link
+    // Old link or invalid
     window.location.href = "expire.html";
   } else if (active.joined) {
-    // Already joined
+    // Already used
     document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;color:red;'>❌ This link has already been used. Please rebook your session.</h2>";
   } else {
-    // Valid join
+    // First-time join
     active.joined = true;
     localStorage.setItem("activeMeeting", JSON.stringify(active));
     document.body.innerHTML = `<h2 style='text-align:center;margin-top:50px;color:green;'>✅ Welcome to your session! Duration: ${active.duration} minutes.</h2>`;
