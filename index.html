@@ -153,7 +153,10 @@
 const PASSWORD = "Wealthy@62";
 const BASE = "https://hdigitalpro7.github.io/videomeeting/WEB_UIKITS.html";
 
-function makeId(len=8){ return Math.random().toString(36).substring(2,2+len); }
+// Generate random meeting ID
+function makeId(len = 8) {
+  return Math.random().toString(36).substring(2, 2 + len);
+}
 
 const generateBtn = document.getElementById('generateBtn');
 const popup = document.getElementById('popup');
@@ -162,12 +165,17 @@ const rebookBtn = document.getElementById('rebookBtn');
 function generateLink() {
   const pass = document.getElementById('password').value;
   const duration = document.getElementById('duration').value;
-  if(pass !== PASSWORD){ alert("❌ Incorrect password"); return; }
+
+  if (pass !== PASSWORD) {
+    alert("❌ Incorrect password");
+    return;
+  }
 
   const meetingId = makeId();
   const link = `${BASE}?meetingId=${meetingId}&duration=${duration}`;
 
-  localStorage.setItem("activeMeeting", JSON.stringify({id:meetingId, duration:duration, joined:false}));
+  // Save new meeting in localStorage
+  localStorage.setItem("activeMeeting", JSON.stringify({ id: meetingId, duration: duration, joined: false }));
 
   const linkA = document.getElementById('meetingLink');
   linkA.href = link;
@@ -175,37 +183,43 @@ function generateLink() {
   document.getElementById('linkDiv').style.display = 'block';
 }
 
+// Generate button click
 generateBtn.addEventListener('click', () => {
   const active = JSON.parse(localStorage.getItem("activeMeeting"));
-  if(active && !active.joined){
+  if (active && !active.joined) {
+    // Show popup if active meeting exists
     popup.style.display = 'flex';
   } else {
     generateLink();
   }
 });
 
+// Rebook button click
 rebookBtn.addEventListener('click', () => {
   popup.style.display = 'none';
   generateLink();
 });
 
-// Meeting page logic
-if(window.location.pathname.endsWith("WEB_UIKITS.html")){
+// Logic for WEB_UIKITS.html page
+if (window.location.pathname.endsWith("WEB_UIKITS.html")) {
   const params = new URLSearchParams(window.location.search);
   const meetingId = params.get("meetingId");
   const active = JSON.parse(localStorage.getItem("activeMeeting"));
 
-  if(!active || active.id !== meetingId){
-    // 🔥 Redirect to expire.html
+  if (!active || active.id !== meetingId) {
+    // Redirect invalid/expired link
     window.location.href = "expire.html";
-  } else if(active.joined){
+  } else if (active.joined) {
+    // Already joined
     document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;color:red;'>❌ This link has already been used. Please rebook your session.</h2>";
   } else {
+    // Valid join
     active.joined = true;
     localStorage.setItem("activeMeeting", JSON.stringify(active));
     document.body.innerHTML = `<h2 style='text-align:center;margin-top:50px;color:green;'>✅ Welcome to your session! Duration: ${active.duration} minutes.</h2>`;
   }
 }
+
 </script>
 </body>
 </html>
