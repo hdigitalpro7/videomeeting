@@ -143,6 +143,29 @@ window.onload = function() {
     timerInterval = setInterval(updateTimer,1000);
   }
 };
+(function(){
+  // Check params
+  const params = new URLSearchParams(window.location.search);
+  const meetingId = params.get("meetingId");
+
+  // Get saved meeting from localStorage
+  const active = JSON.parse(localStorage.getItem("activeMeeting"));
+
+  if(!active || active.id !== meetingId){
+    document.body.innerHTML = "<h1 style='text-align:center;margin-top:50px;color:red;font-size:28px;'>❌ 404 - This link has expired.</h1>";
+    throw new Error("Link expired - stopping script"); // stop further execution
+  }
+  else if(active.used){
+    document.body.innerHTML = "<h1 style='text-align:center;margin-top:50px;color:red;font-size:28px;'>❌ 404 - This link has already been used.</h1>";
+    throw new Error("Link already used - stopping script");
+  }
+  else {
+    // First time access → mark as used
+    active.used = true;
+    localStorage.setItem("activeMeeting", JSON.stringify(active));
+    // continue normal meeting code...
+  }
+})();
 </script>
 
 </body>

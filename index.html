@@ -123,7 +123,11 @@ function generateLink() {
   const link = `${BASE}?meetingId=${meetingId}&duration=${duration}`;
 
   // Save to localStorage
-  localStorage.setItem("activeMeeting", JSON.stringify({id:meetingId, duration:duration, joined:false}));
+  localStorage.setItem("activeMeeting", JSON.stringify({
+    id: meetingId,
+    duration: duration,
+    used: false
+  }));
 
   const linkA = document.getElementById('meetingLink');
   linkA.href = link;
@@ -131,10 +135,10 @@ function generateLink() {
   document.getElementById('linkDiv').style.display = 'block';
 }
 
-// Button generate link
+// Generate button
 generateBtn.addEventListener('click', () => {
   const active = JSON.parse(localStorage.getItem("activeMeeting"));
-  if(active && !active.joined){
+  if(active && !active.used){
     popup.style.display = 'flex'; // already active meeting
   } else {
     generateLink();
@@ -153,16 +157,23 @@ if(window.location.pathname.endsWith("WEB_UIKITS.html")){
   const meetingId = params.get("meetingId");
 
   const active = JSON.parse(localStorage.getItem("activeMeeting"));
+
   if(!active || active.id !== meetingId){
-    document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;color:red;'>❌ This link has expired. Please rebook your session.</h2>";
-  } else if(active.joined){
-    document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;color:red;'>❌ This link has already been used. Please rebook your session.</h2>";
-  } else {
-    active.joined = true;
+    // Wrong / expired link
+    document.body.innerHTML = "<h1 style='text-align:center;margin-top:50px;color:red;font-size:28px;'>❌ 404 - This link has expired.</h1>";
+  } 
+  else if(active.used){
+    // Already used
+    document.body.innerHTML = "<h1 style='text-align:center;margin-top:50px;color:red;font-size:28px;'>❌ 404 - This link is no longer valid.</h1>";
+  } 
+  else {
+    // First time join
+    active.used = true;
     localStorage.setItem("activeMeeting", JSON.stringify(active));
-    document.body.innerHTML = `<h2 style='text-align:center;margin-top:50px;color:green;'>✅ Welcome to your session! Duration: ${active.duration} minutes.</h2>`;
+    document.body.innerHTML = `<h1 style='text-align:center;margin-top:50px;color:green;font-size:28px;'>✅ Welcome to your session! Duration: ${active.duration} minutes.</h1>`;
   }
 }
 </script>
+
 </body>
 </html>
