@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Therapy Room</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
   body { 
     font-family: 'Montserrat', sans-serif; 
@@ -14,49 +14,26 @@
     flex-direction: row;
     gap: 40px;
   }
-
   .panel { 
     width: 400px; padding: 35px; border-radius: 20px; 
     background: #fff; text-align: center; 
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     animation: fadeIn 0.6s ease;
   }
-
-  h2 {
-    margin-bottom: 20px; 
-    font-size: 22px; 
-    color: #6a1b9a;
-    font-weight: 600;
-  }
-
+  h2 { margin-bottom: 20px; font-size: 22px; color: #6a1b9a; font-weight: 600; }
   input, select, button {
     width: 100%; padding: 12px 15px; margin: 12px 0;
     font-size: 15px; border-radius: 10px; border: 1px solid #ccc; 
     outline: none; transition: 0.3s;
   }
-
-  input:focus, select:focus {
-    border-color: #9b59b6; 
-    box-shadow: 0 0 5px rgba(155, 89, 182, 0.4);
-  }
-
+  input:focus, select:focus { border-color: #9b59b6; box-shadow: 0 0 5px rgba(155, 89, 182, 0.4); }
   button {
     background: linear-gradient(135deg, #9b59b6, #6a1b9a);
     color: #fff; border: none; cursor: pointer; 
     font-weight: 600; transition: 0.3s;
   }
-
-  button:hover { 
-    background: linear-gradient(135deg, #6a1b9a, #9b59b6); 
-    transform: translateY(-2px); 
-    box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
-  }
-
-  a { 
-    word-break: break-word; color: #6a1b9a; 
-    display: block; margin: 10px 0; 
-    font-weight: 500;
-  }
+  button:hover { background: linear-gradient(135deg, #6a1b9a, #9b59b6); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);}
+  a { word-break: break-word; color: #6a1b9a; display: block; margin: 10px 0; font-weight: 500; }
 
   /* Popup styles */
   #popup {
@@ -64,164 +41,57 @@
     background: rgba(0,0,0,0.6); display:none; 
     justify-content:center; align-items:center;
   }
-
   #popup .content {
     background:#fff; padding:30px; border-radius:15px; 
     text-align:center; width:300px; 
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     animation: fadeInScale 0.4s ease;
   }
-
   #popup p { color: #d32f2f; font-weight: 500; margin-bottom: 15px; }
   #popup button { background:#27ae60; }
 
-  @keyframes fadeIn {
-    from { opacity:0; transform: translateY(20px); }
-    to { opacity:1; transform: translateY(0); }
-  }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+  @keyframes fadeInScale { from { opacity:0; transform: scale(0.8); } to { opacity:1; transform: scale(1); } }
 
-  @keyframes fadeInScale {
-    from { opacity:0; transform: scale(0.8); }
-    to { opacity:1; transform: scale(1); }
-  }
-
-   /* Full-width ticker styles */
+  /* Ticker */
   .ticker-full {
-    position: fixed;
-    top: 0; left: 0; width: 100%;
+    position: fixed; top: 0; left: 0; width: 100%;
     overflow: hidden;
     background: linear-gradient(135deg, #079fdb, #040305);
-    padding: 12px 0;
-    color: #fff;
-    font-weight: 500;
-    font-size: 15px;
-    z-index: 1000;
+    padding: 12px 0; color: #fff; font-weight: 500; font-size: 15px; z-index: 1000;
   }
-
   .ticker-full .ticker-content {
-    display: inline-block;
-    white-space: nowrap;
-    padding-left: 100%;
-    animation: tickerFullAnim 25s linear infinite;
+    display: inline-block; white-space: nowrap;
+    padding-left: 100%; animation: tickerFullAnim 25s linear infinite;
   }
+  .ticker-item { display: inline-block; margin-right: 50px; }
+  .ticker-item i { margin-right: 6px; color: #ffd700; }
+  @keyframes tickerFullAnim { 0% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
 
-  .ticker-full .ticker-content i {
-    margin-right: 6px;
+  /* Logo */
+  .logo-container { display: flex; justify-content: center; align-items: center; height: 150px; }
+  .logo { max-width: 100%; height: 260px; animation: spin 10s linear infinite; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  /* Profile */
+  .profile-container { display: flex; flex-direction: column; align-items: center; }
+  .doctor-box { text-align: center; }
+  .doctor-box img { width: 300px; height: 350px; object-fit: cover; border: 3px solid #9b59b6; border-radius: 10px; }
+  .doctor-box p { margin-top: 10px; font-size: 18px; font-weight: 600; color: #fff; }
+
+  /* Social */
+  .social-icons { margin-top: 15px; display: flex; justify-content: center; gap: 20px; }
+  .social-icons a { display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background: #fff; padding: 5px; transition: 0.3s; }
+  .social-icons a img { width: 100%; height: 100%; object-fit: contain; }
+  .social-icons a:hover { transform: scale(1.2); box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4); }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    body { flex-direction: column; gap: 20px; justify-content: flex-start; align-items: center; }
+    .profile-container { order: 1; top: -25px; }
+    .panel { width: 90%; padding: 25px; margin-top: 80px; }
+    .doctor-box img { width: 80%; height: auto; }
   }
-
-  @keyframes tickerFullAnim {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-100%); }
-  }
-.ticker-item {
-  display: inline-block;
-  margin-right: 50px; /* spacing between items */
-}
-
-.ticker-item i {
-  margin-right: 6px;
-  color: #ffd700; /* optional: golden icon color */
-}
- .logo-container {
-  display: flex;
-  justify-content: center; /* horizontally center */
-  align-items: center;     /* vertically center */
-  height: 150px;           /* adjust as needed */
-}
-
-.logo {
-  max-width: 100%;         
-  height: 260px;           /* adjust as needed */
-  animation: spin 10s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Profile + Social icons container */
-.profile-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.doctor-box {
-  text-align: center;
-}
-
-.doctor-box img {
-  width: 300px;
-  height: 350px;
-  object-fit: cover;
-  border: 3px solid #9b59b6;
-  border-radius: 10px;
-}
-
-.doctor-box p {
-  margin-top: 10px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #6a1b9a;
-}
-
-/* Social Icons */
-.social-icons {
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.social-icons a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #fff;
-  padding: 5px;
-  transition: 0.3s;
-}
-
-.social-icons a img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.social-icons a:hover {
-  transform: scale(1.2);
-  box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4);
-}
-/* Mobile adjustments */
-@media (max-width: 768px) {
-  body {
-    flex-direction: column;  /* stack panels vertically */
-    gap: 20px;
-    justify-content: flex-start;
-    align-items: center;
-  }
-
-  .profile-container {
-    order: 1;  /* move doctor profile below the main panel */
-top: -25px;
-  }
-
-  .panel {
-    width: 90%;  /* make panel smaller on mobile */
-    padding: 25px;
-    margin-top: 80px;
-  }
-
-  .doctor-box img {
-    width: 80%;  /* scale doctor image for mobile */
-    height: auto;
-  }
-}
-
 </style>
 </head>
 <body>
@@ -237,11 +107,10 @@ top: -25px;
 </div>
 
 <!-- Left Panel -->
-<div class="panel" id="mainPanel" >
-   <!-- Rotating Logo -->
-<div class="logo-container">
-  <img src="LOGO DEAR THERAPIST (1).png" alt="Logo" class="logo">
-</div>
+<div class="panel" id="mainPanel">
+  <div class="logo-container">
+    <img src="LOGO DEAR THERAPIST (1).png" alt="Logo" class="logo">
+  </div>
   <h2>Set Duration & Generate Link</h2>
   <input type="password" id="password" placeholder="Enter Password" style="width: 90%;">
   <select id="duration">
@@ -252,34 +121,23 @@ top: -25px;
     <option value="60">60 Minutes</option>
   </select>
   <button id="generateBtn">Generate Link</button>
-
   <div id="linkDiv" style="display:none;">
     <p><strong>Your Meeting Link:</strong></p>
     <a href="#" id="meetingLink" target="_blank"></a>
   </div>
 </div>
 
-<!-- Right Side Doctor Profile + Social Icons -->
+<!-- Right Panel -->
 <div class="profile-container">
   <div class="doctor-box" style="margin-top: 40px;">
     <img src="ts.jpeg" alt="Dr. Shaveta">
-    <p style="color: #fff; font-size: 18px;"> Welcome To Dr. Shaveta Therapy Room</p>
+    <p>Welcome To Dr. Shaveta Therapy Room</p>
   </div>
-
-  <!-- Social Media Icons -->
-  <div class="social-icons" style=" margin-top: -10px;">
-    <a href="https://instagram.com" target="_blank">
-      <img src="instalogo.png" alt="Instagram">
-    </a>
-    <a href="https://youtube.com" target="_blank">
-      <img src="youtube.png" alt="YouTube">
-    </a>
-    <a href="https://wa.me/1234567890" target="_blank">
-      <img src="whatsap.png" alt="WhatsApp">
-    </a>
-    <a href="https://yourwebsite.com" target="_blank">
-      <img src="web.png" alt="Website">
-    </a>
+  <div class="social-icons" style="margin-top: -10px;">
+    <a href="https://instagram.com" target="_blank"><img src="instalogo.png" alt="Instagram"></a>
+    <a href="https://youtube.com" target="_blank"><img src="youtube.png" alt="YouTube"></a>
+    <a href="https://wa.me/1234567890" target="_blank"><img src="whatsap.png" alt="WhatsApp"></a>
+    <a href="https://yourwebsite.com" target="_blank"><img src="web.png" alt="Website"></a>
   </div>
 </div>
 
@@ -309,7 +167,6 @@ function generateLink() {
   const meetingId = makeId();
   const link = `${BASE}?meetingId=${meetingId}&duration=${duration}`;
 
-  // Save to localStorage: only 1 active meeting
   localStorage.setItem("activeMeeting", JSON.stringify({id:meetingId, duration:duration, joined:false}));
 
   const linkA = document.getElementById('meetingLink');
@@ -318,18 +175,15 @@ function generateLink() {
   document.getElementById('linkDiv').style.display = 'block';
 }
 
-// Check if user already has an active meeting
 generateBtn.addEventListener('click', () => {
   const active = JSON.parse(localStorage.getItem("activeMeeting"));
   if(active && !active.joined){
-    // Show rebook popup
     popup.style.display = 'flex';
   } else {
     generateLink();
   }
 });
 
-// Rebook button click
 rebookBtn.addEventListener('click', () => {
   popup.style.display = 'none';
   generateLink();
@@ -339,10 +193,11 @@ rebookBtn.addEventListener('click', () => {
 if(window.location.pathname.endsWith("WEB_UIKITS.html")){
   const params = new URLSearchParams(window.location.search);
   const meetingId = params.get("meetingId");
-
   const active = JSON.parse(localStorage.getItem("activeMeeting"));
+
   if(!active || active.id !== meetingId){
-    document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;color:red;'>❌ This link has expired. Please rebook your session.</h2>";
+    // 🔥 Redirect to expire.html
+    window.location.href = "expire.html";
   } else if(active.joined){
     document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;color:red;'>❌ This link has already been used. Please rebook your session.</h2>";
   } else {

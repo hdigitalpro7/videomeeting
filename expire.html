@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Link Expired</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ff4e50, #8e0e00);
+      font-family: Arial, sans-serif;
+      color: #fff;
+      text-align: center;
+    }
+    .box {
+      background: rgba(0,0,0,0.6);
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    h1 {
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+    p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    #timer {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 10px;
+      color: #f1c40f;
+    }
+  </style>
+  <script>
+    let countdown = 10;
+    function startTimer() {
+      const timerEl = document.getElementById("timer");
+      const interval = setInterval(() => {
+        timerEl.textContent = "Redirecting in " + countdown + " seconds...";
+        countdown--;
+        if (countdown < 0) {
+          clearInterval(interval);
+          window.location.href = "thanks.html"; // Auto redirect
+        }
+      }, 1000);
+    }
+    window.onload = startTimer;
+  </script>
+</head>
+<body>
+  <div class="box">
+    <h1>❌ Session Expired</h1>
+    <p>This meeting link is no longer valid.<br>Please rebook your session.</p>
+    <div id="timer">Redirecting in 10 seconds...</div>
+  </div>
+</body>
+</html>
