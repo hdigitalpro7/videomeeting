@@ -4,31 +4,104 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Therapy Room</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
 <style>
-body { font-family:'Montserrat',sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; background:#fff; }
-.panel { width:400px; padding:30px; border-radius:15px; background:#f9f9f9; text-align:center; box-shadow:0 0 20px rgba(0,0,0,0.1);}
-input, select, button { width:100%; padding:10px; margin:10px 0; font-size:16px; border-radius:8px; border:1px solid #aaa; }
-button { background:#9b59b6; color:#fff; border:none; cursor:pointer; }
-a { word-break:break-word; color:#5e2ca5; display:block; margin:10px 0;}
+  body { 
+    font-family: 'Montserrat', sans-serif; 
+    display: flex; justify-content: center; align-items: center; 
+    height: 100vh; margin: 0;
+    background: linear-gradient(135deg, #9b59b6, #6a1b9a); 
+    flex-direction: row;
+    gap: 40px;
+  }
+  .panel { 
+    width: 400px; padding: 35px; border-radius: 20px; 
+    background: #fff; text-align: center; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    animation: fadeIn 0.6s ease;
+  }
+  h2 { margin-bottom: 20px; font-size: 22px; color: #6a1b9a; font-weight: 600; }
+  input, select, button {
+    width: 100%; padding: 12px 15px; margin: 12px 0;
+    font-size: 15px; border-radius: 10px; border: 1px solid #ccc; 
+    outline: none; transition: 0.3s;
+  }
+  button {
+    background: linear-gradient(135deg, #9b59b6, #6a1b9a);
+    color: #fff; border: none; cursor: pointer; 
+    font-weight: 600; transition: 0.3s;
+  }
+  button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4); }
+  a { word-break: break-word; color: #6a1b9a; display: block; margin: 10px 0; font-weight: 500; }
+  #popup {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.6); display:none; 
+    justify-content:center; align-items:center;
+  }
+  #popup .content {
+    background:#fff; padding:30px; border-radius:15px; 
+    text-align:center; width:300px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+  #popup p { color: #d32f2f; font-weight: 500; margin-bottom: 15px; }
+  #popup button { background:#27ae60; color:#fff; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+  /* Doctor Profile */
+  .profile-container { display: flex; flex-direction: column; align-items: center; }
+  .doctor-box img { width: 300px; height: 350px; object-fit: cover; border: 3px solid #9b59b6; border-radius: 10px; }
+  .doctor-box p { margin-top: 10px; font-size: 18px; font-weight: 600; color: #fff; }
+  .social-icons { margin-top: 15px; display: flex; justify-content: center; gap: 20px; }
+  .social-icons a { width: 50px; height: 50px; border-radius: 50%; background: #fff; display:flex; align-items:center; justify-content:center; transition:0.3s; }
+  .social-icons a:hover { transform: scale(1.2); box-shadow: 0 5px 15px rgba(155, 89, 182, 0.4); }
+  .social-icons img { width: 70%; }
+  @media (max-width: 768px) {
+    body { flex-direction: column; gap: 20px; justify-content: flex-start; align-items: center; }
+    .panel { width: 90%; padding: 25px; margin-top: 30px; }
+    .doctor-box img { width: 80%; height: auto; }
+  }
 </style>
 </head>
 <body>
-<div class="panel">
-<h2>Set Duration & Generate Link</h2>
-<input type="password" id="password" placeholder="Enter Password">
-<select id="duration">
-  <option value="5">5 Minutes</option>
-  <option value="10">10 Minutes</option>
-  <option value="15">15 Minutes</option>
-  <option value="30" selected>30 Minutes</option>
-  <option value="60">60 Minutes</option>
-</select>
-<button id="generateBtn">Generate Link</button>
 
-<div id="linkDiv" style="display:none;">
-  <p>Your Meeting Link:</p>
-  <a href="#" id="meetingLink" target="_blank"></a>
+<!-- Left Panel -->
+<div class="panel" id="mainPanel" >
+  <h2>Set Duration & Generate Link</h2>
+  <input type="password" id="password" placeholder="Enter Password">
+  <select id="duration">
+    <option value="5">5 Minutes</option>
+    <option value="10">10 Minutes</option>
+    <option value="15">15 Minutes</option>
+    <option value="30" selected>30 Minutes</option>
+    <option value="60">60 Minutes</option>
+  </select>
+  <button id="generateBtn">Generate Link</button>
+
+  <div id="linkDiv" style="display:none;">
+    <p><strong>Your Meeting Link:</strong></p>
+    <a href="#" id="meetingLink" target="_blank"></a>
+  </div>
 </div>
+
+<!-- Right Side Doctor Profile -->
+<div class="profile-container">
+  <div class="doctor-box">
+    <img src="ts.jpeg" alt="Dr. Shaveta">
+    <p>Welcome To Dr. Shaveta Therapy Room</p>
+  </div>
+  <div class="social-icons">
+    <a href="https://instagram.com"><img src="instalogo.png"></a>
+    <a href="https://youtube.com"><img src="youtube.png"></a>
+    <a href="https://wa.me/1234567890"><img src="whatsap.png"></a>
+    <a href="https://yourwebsite.com"><img src="web.png"></a>
+  </div>
+</div>
+
+<!-- Popup -->
+<div id="popup">
+  <div class="content">
+    <p>❌ You already have an active meeting. Please rebook your session.</p>
+    <button id="rebookBtn">Rebook</button>
+  </div>
 </div>
 
 <script>
@@ -37,26 +110,44 @@ const BASE = "https://hdigitalpro7.github.io/videomeeting/WEB_UIKITS.html";
 
 function makeId(len=8){ return Math.random().toString(36).substring(2,2+len); }
 
-// Generate link button click
-document.getElementById('generateBtn').addEventListener('click',()=>{
+const generateBtn = document.getElementById('generateBtn');
+const popup = document.getElementById('popup');
+const rebookBtn = document.getElementById('rebookBtn');
+
+function generateLink() {
   const pass = document.getElementById('password').value;
   const duration = document.getElementById('duration').value;
   if(pass !== PASSWORD){ alert("❌ Incorrect password"); return; }
 
-  // Create a unique meeting ID
   const meetingId = makeId();
   const link = `${BASE}?meetingId=${meetingId}&duration=${duration}`;
 
-  // Save to localStorage: only 1 user can join
+  // Save to localStorage
   localStorage.setItem("activeMeeting", JSON.stringify({id:meetingId, duration:duration, joined:false}));
 
   const linkA = document.getElementById('meetingLink');
   linkA.href = link;
   linkA.textContent = link;
   document.getElementById('linkDiv').style.display = 'block';
+}
+
+// Button generate link
+generateBtn.addEventListener('click', () => {
+  const active = JSON.parse(localStorage.getItem("activeMeeting"));
+  if(active && !active.joined){
+    popup.style.display = 'flex'; // already active meeting
+  } else {
+    generateLink();
+  }
 });
 
-// Check if someone opens the meeting link
+// Rebook
+rebookBtn.addEventListener('click', () => {
+  popup.style.display = 'none';
+  generateLink();
+});
+
+// Meeting page logic
 if(window.location.pathname.endsWith("WEB_UIKITS.html")){
   const params = new URLSearchParams(window.location.search);
   const meetingId = params.get("meetingId");
@@ -67,7 +158,6 @@ if(window.location.pathname.endsWith("WEB_UIKITS.html")){
   } else if(active.joined){
     document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;color:red;'>❌ This link has already been used. Please rebook your session.</h2>";
   } else {
-    // Mark the meeting as joined
     active.joined = true;
     localStorage.setItem("activeMeeting", JSON.stringify(active));
     document.body.innerHTML = `<h2 style='text-align:center;margin-top:50px;color:green;'>✅ Welcome to your session! Duration: ${active.duration} minutes.</h2>`;
