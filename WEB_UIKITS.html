@@ -227,3 +227,233 @@ window.onload = function() {
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr Shaveta’s Therapy — 1:1 Room</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+  /* General body */
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: #fff;
+    overflow: hidden;
+    color: #111;
+  }
+
+  /* Loading Screen */
+  #loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #5e2ca5;
+  }
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border: 6px solid rgba(94,44,165,0.2);
+    border-top: 6px solid #5e2ca5;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+  }
+  @keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Root container */
+  #root {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+
+  /* Header */
+  .meeting-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: linear-gradient(135deg, #5e2ca5, #7b4dff);
+    color: #fff;
+    text-align: center;
+    padding: 16px 0;
+    font-size: 22px;
+    font-weight: 700;
+    z-index: 1000;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  /* Timer */
+  #timer {
+    position: fixed;
+    top: 18px;
+    right: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    background: #111;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+
+  /* Ticker */
+  .ticker {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: #111;
+    color: #fff;
+    padding: 8px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 14px;
+    border-bottom: 2px solid #5e2ca5;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 999;
+  }
+  .ticker-content {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker 35s linear infinite;
+  }
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+  .ticker i { color: #f9c74f; margin: 0 6px; }
+
+  /* Toast notification */
+  #toast {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #5e2ca5;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    font-weight: 600;
+    display: none;
+    z-index: 2000;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <p>Connecting to your session...</p>
+</div>
+
+<div id="root"></div>
+
+<div class="meeting-header">
+  Dr. Shaveta’s 1-to-1 Therapy Room
+  <span id="timer">00:00</span>
+</div>
+
+<div class="ticker">
+  <div class="ticker-content">
+    <i class="fa-solid fa-brain"></i> Hypnosis – Release fears |
+    <i class="fa-solid fa-people-arrows"></i> Couple Counseling – Better bonding |
+    <i class="fa-solid fa-moon"></i> Past Life Regression – Heal trauma |
+    <i class="fa-solid fa-leaf"></i> Deep Healing – Emotional balance |
+    <i class="fa-solid fa-face-meh-blank"></i> Overthinking – Calm mind
+  </div>
+</div>
+
+<div id="toast">⚠️ Your session will end in 5 minutes!</div>
+
+<script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
+<script>
+window.onload = function() {
+  const params = new URLSearchParams(window.location.search);
+  const roomID = params.get('room') || "testroom";
+  const duration = parseInt(params.get('duration')) || 30;
+  const userID = Math.floor(Math.random()*10000)+"";
+  const userName = "user_" + userID;
+
+  if (!params.get('duration')) {
+    alert("⚠️ Duration not set. Please generate the link again.");
+    window.location.href = "index.html";
+    return;
+  }
+
+  const appID = 1132723204;
+  const serverSecret = "c81d43e22b435274183c19c59a510217";
+  const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
+  const zp = ZegoUIKitPrebuilt.create(kitToken);
+
+  let timerInterval;
+
+  zp.joinRoom({
+    container: document.querySelector("#root"),
+    sharedLinks: [
+      { name: 'Join Link', url: `${window.location.origin}${window.location.pathname}?room=${roomID}&duration=${duration}` }
+    ],
+    scenario: { mode: ZegoUIKitPrebuilt.VideoConference },
+    turnOnMicrophoneWhenJoining:true,
+    turnOnCameraWhenJoining:true,
+    showMyCameraToggleButton:true,
+    showMyMicrophoneToggleButton:true,
+    showScreenSharingButton:true,
+    showTextChat:true,
+    showUserList:true,
+    maxUsers:50,
+    layout:"Auto",
+    onJoinRoom: () => { startTimer(duration*60); },
+    onLeaveRoom: () => { window.location.href = "thanks.html"; }
+  });
+
+  setTimeout(() => {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("root").style.display = "block";
+  }, 2000);
+
+  function startTimer(seconds){
+    const timerEl = document.getElementById("timer");
+    const toastEl = document.getElementById("toast");
+    let remaining = seconds;
+    let alertShown = false;
+
+    function updateTimer(){
+      let min = Math.floor(remaining/60);
+      let sec = remaining%60;
+      timerEl.textContent = `⏳ ${min}:${sec < 10 ? "0"+sec : sec}`;
+
+      // Show toast 5 minutes (300 seconds) before session ends
+      if(remaining === 300 && !alertShown){
+        toastEl.style.display = "block";
+        setTimeout(()=>{ toastEl.style.display = "none"; }, 10000); // visible for 10 seconds
+        alertShown = true;
+      }
+
+      remaining--;
+      if(remaining < 0){
+        clearInterval(timerInterval);
+        window.location.href = "thanks.html";
+      }
+    }
+
+    updateTimer();
+    timerInterval = setInterval(updateTimer,1000);
+  }
+};
+</script>
+
+</body>
+</html>
